@@ -33,7 +33,7 @@ export function generateProject() {
 }
 
 // 查询项目信息
-export function dispatchProject(id) {
+export function projectInfo(id) {
     return request({
         url: '/project/' + id + '/info',
         method: 'get',

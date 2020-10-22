@@ -54,11 +54,10 @@ export function commitTask(id, data) {
 }
 
 // 任务进入提交阶段
-export function finishTask(id, data) {
+export function finishTask(id) {
     return request({
         url: '/task/' + id + '/finish',
-        method: 'post',
-        data: data
+        method: 'get',
     })
 }
 
@@ -66,6 +65,14 @@ export function finishTask(id, data) {
 export function confirmTask(id) {
     return request({
         url: '/task/' + id + '/confirm',
+        method: 'get',
+    })
+}
+
+// 任务打回重做
+export function rejectTask(id) {
+    return request({
+        url: '/task/' + id + '/reject',
         method: 'get',
     })
 }
