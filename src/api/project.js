@@ -1,55 +1,41 @@
 import request from '@/utils/request'
 
 // 列出符合当前权限的项目
-export function listProject(params) {
+export function listProject() {
     return request({
         url: '/project/list',
         method: 'get',
-        params: params
     })
 }
 
-// 重启项目
-export function rebootProject(params) {
+// 启动项目
+export function startProject(id) {
     return request({
-        url: '/project/reboot',
+        url: '/project/' + id + '/start',
         method: 'get',
-        params: params
     })
 }
 
 // 终止项目
-export function stopProject(params) {
+export function stopProject(id) {
     return request({
-        url: '/project/stop',
+        url: '/project/' + id + '/stop',
         method: 'get',
-        params: params
     })
 }
 
-// 调整项目顺序
-export function reorderProject(params) {
+// 生成项目
+export function generateProject() {
     return request({
-        url: '/project/reorder',
+        url: '/project/gen',
         method: 'get',
-        params: params
     })
 }
 
-// 指派项目人员
-export function dispatchProject(params) {
+// 查询项目信息
+export function dispatchProject(id) {
     return request({
-        url: '/project/dispatch',
+        url: '/project/' + id + '/info',
         method: 'get',
-        params: params
-    })
-}
-
-// 查看项目指派
-export function listProjectDispatch(params) {
-    return request({
-        url: '/project/listDispatch',
-        method: 'get',
-        params: params
     })
 }

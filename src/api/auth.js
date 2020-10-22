@@ -10,19 +10,18 @@ export function login(params) {
 }
 
 // 刷新凭证
-export function refreshLogin(params) {
+export function refreshLogin() {
     return request({
         url: '/auth/refresh',
         method: 'get',
-        params: params
     })
 }
 
 // 注册
-export function register(params) {
+export function register(data) {
     return request({
         url: '/auth/register',
-        method: 'get',
-        params: params
+        method: 'post',
+        data: data
     })
 }
