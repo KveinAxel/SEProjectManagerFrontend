@@ -17,6 +17,8 @@ Vue.use(VCharts);
 
 Vue.config.productionTip = false;
 
+require('./mock.js')
+
 new Vue({
     el: '#app',
     router,
