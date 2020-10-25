@@ -12,7 +12,7 @@ export function listProject() {
 export function startProject(id) {
     return request({
         url: '/project/' + id + '/start',
-        method: 'get',
+        method: 'post',
     })
 }
 
@@ -20,7 +20,7 @@ export function startProject(id) {
 export function stopProject(id) {
     return request({
         url: '/project/' + id + '/stop',
-        method: 'get',
+        method: 'post',
     })
 }
 
@@ -28,7 +28,7 @@ export function stopProject(id) {
 export function generateProject() {
     return request({
         url: '/project/gen',
-        method: 'get',
+        method: 'post',
     })
 }
 

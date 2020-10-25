@@ -1,11 +1,14 @@
 import request from '@/utils/request'
 
 // 登陆
-export function login(params) {
+export function login(username, password) {
     return request({
         url: '/auth/login',
-        method: 'get',
-        params: params
+        method: 'post',
+        data: {
+            'username': username,
+            'password': password,
+        }
     })
 }
 
@@ -18,10 +21,14 @@ export function refreshLogin() {
 }
 
 // 注册
-export function register(data) {
+export function register(username, password, name) {
     return request({
         url: '/auth/register',
         method: 'post',
-        data: data
+        data: {
+            'username': username,
+            'password': password,
+            'name': name
+        }
     })
 }

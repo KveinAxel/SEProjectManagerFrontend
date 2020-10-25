@@ -5,7 +5,7 @@ Vue.use(Router);
 
 export const constantRouterMap = [
     {path: '/404', component: () => import('@/views/404'), hidden: true},
-    {path: '/', component: () => import('@/views/home'), hidden: true},
+    {path: '/', component: () => import('@/views/login/login'), hidden: true},
     {path: '*', redirect: '/404', hidden: true}
 ];
 

@@ -1,20 +1,30 @@
 import request from '@/utils/request'
 
 // 委派任务
-export function delegateTask(id, data) {
+export function delegateTask(id, delegateTo, expire) {
     return request({
         url: '/task/' + id + '/delegate',
         method: 'post',
-        data: data
+        data: {
+            'delegateTo': delegateTo,
+            'expire': expire,
+        }
     })
 }
 
 // 更新任务信息
-export function updateTask(id, data) {
+export function updateTask(id, previousId, name, type, undertaker, status, project) {
     return request({
         url: '/task/' + id + '/update',
         method: 'post',
-        data: data
+        data: {
+            'previousId': previousId,
+            'name': name,
+            'type': type,
+            'undertaker': undertaker,
+            'status': status,
+            'project': project,
+        }
     })
 }
 
@@ -28,11 +38,17 @@ export function updateTaskBatch(data) {
 }
 
 // 增加任务
-export function addTask(data) {
+export function addTask(previousId, name, type, undertaker, project) {
     return request({
         url: '/task/add',
         method: 'post',
-        data: data
+        data: {
+            'previousId': previousId,
+            'name': name,
+            'type': type,
+            'undertaker': undertaker,
+            'project': project,
+        }
     })
 }
 
@@ -57,7 +73,7 @@ export function commitTask(id, data) {
 export function finishTask(id) {
     return request({
         url: '/task/' + id + '/finish',
-        method: 'get',
+        method: 'post',
     })
 }
 
@@ -65,7 +81,7 @@ export function finishTask(id) {
 export function confirmTask(id) {
     return request({
         url: '/task/' + id + '/confirm',
-        method: 'get',
+        method: 'post',
     })
 }
 
@@ -73,6 +89,14 @@ export function confirmTask(id) {
 export function rejectTask(id) {
     return request({
         url: '/task/' + id + '/reject',
-        method: 'get',
+        method: 'post',
+    })
+}
+
+// 任务打回重做
+export function withdrawTask(id) {
+    return request({
+        url: '/task/' + id + '/withdraw',
+        method: 'post',
     })
 }

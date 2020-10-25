@@ -52,11 +52,11 @@
 
 <script>
     import login_center_bg from '@/assets/images/login_center_bg.png'
-    import {login} from '@/api/user'
     import {isvalidPhoneNumber} from "@/utils/validate";
+    import {login} from "@/api/auth";
 
     export default {
-        name: 'login',
+        name: 'loginView',
         data() {
             const validatePhoneNumber = (rule, value, callback) => {
                 if (!isvalidPhoneNumber(value)) {
