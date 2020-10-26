@@ -1,4 +1,5 @@
 import Vue from 'vue'
+require('./mock.js')
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 import ElementUI from 'element-ui'
