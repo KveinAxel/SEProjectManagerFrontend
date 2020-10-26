@@ -48,9 +48,9 @@ export function addEmployee(userId) {
 }
 
 // 员工信息
-export function employeeInfo(eid) {
+export function employeeInfo() {
     return request({
-        url: '/employee/' + eid + '/info',
+        url: '/employee/info',
         method: 'get',
     })
 }

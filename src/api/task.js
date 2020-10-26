@@ -100,3 +100,12 @@ export function withdrawTask(id) {
         method: 'post',
     })
 }
+
+// 获取一个项目下的所有任务
+export function listProjectTask(params) {
+    return request({
+        url: '/task/project',
+        method: 'get',
+        params: params
+    })
+}

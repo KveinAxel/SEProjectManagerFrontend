@@ -7,5 +7,7 @@ const getters = {
     ename:  state => state.user.ename,
     mid:    state => state.user.mid,
     mname:  state => state.user.mname,
+    sidebar: state => state.app.sidebar,
+    device: state => state.app.device,
 };
 export default getters

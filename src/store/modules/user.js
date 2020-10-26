@@ -1,0 +1,125 @@
+    import {login, refresh} from '@/api/auth'
+import {getToken, setToken, removeToken} from '@/utils/auth'
+import {userInfo} from "@/api/user";
+import {managerInfo} from "../../api/manager";
+import {employeeInfo} from "../../api/employee";
+    import {refreshLogin} from "../../api/auth";
+
+const user = {
+    state: {
+        token: getToken(),
+        name: '',
+        avatar: '',
+        eid: '',
+        ename: '',
+        mid: '',
+        mname: '',
+        roles: []
+    },
+
+    mutations: {
+        SET_TOKEN: (state, token) => {
+            state.token = token
+        },
+        SET_NAME: (state, name) => {
+            state.name = name
+        },
+        SET_ROLES: (state, roles) => {
+            state.roles = roles
+        },
+        SET_AVATAR: (state, avatar) => {
+            state.avatar = avatar
+        },
+        SET_EMPLOYEE: (state, eid, ename) => {
+            state.eid = eid;
+            state.ename = ename;
+        },
+        SET_MANAGER: (state, mid, mname) => {
+            state.mid = mid;
+            state.mname = mname;
+        },
+
+    },
+
+    actions: {
+        // 登录
+        Login({commit}, userInfo) {
+            const username = userInfo.username.trim();
+            return new Promise((resolve, reject) => {
+                login(username, userInfo.password).then(response => {
+                    const data = response.data;
+                    const tokenStr = JSON.stringify(data['authToken']);
+                    const roles = data['roles'];
+                    commit('SET_NAME', data.username);
+                    setToken(tokenStr);
+                    commit('SET_TOKEN', tokenStr);
+                    commit('SET_ROLES', roles);
+                    resolve()
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        // 获取用户信息
+        GetInfo({commit, state}) {
+            return new Promise((resolve, reject) => {
+                userInfo().then(response => {
+                    const data = response.data;
+                    // todo add avatar
+                    // commit('SET_AVATAR', data.avatar);
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+
+        // 刷新凭证
+        Refresh({commit}) {
+            return new Promise(resolve => {
+                refreshLogin().then(response => {
+                    const data = response.data;
+                    const tokenStr = JSON.stringify(data['authToken']);
+                    setToken(tokenStr);
+                    commit('SET_TOKEN', tokenStr);
+                })
+            })
+        },
+
+        // 登出
+        LogOut({commit}) {
+            return new Promise(resolve => {
+                commit('SET_TOKEN', '');
+                removeToken();
+                resolve()
+            })
+        },
+
+        // 请求经理信息
+        ManagerInfo({commit}) {
+            return new Promise((resolve, reject) => {
+                managerInfo().then(response => {
+                    const id = response.data.id;
+                    const name = response.data.name;
+                    commit("SET_MANAGER", id, name);
+                    resolve();
+                })
+            })
+        },
+
+        // 请求员工信息
+        EmployeeInfo({commit}) {
+            return new Promise((resolve, reject) => {
+                employeeInfo().then(response => {
+                    const id = response.data.id;
+                    const name = response.data.name;
+                    commit("SET_EMPLOYEE", id, name);
+                    resolve();
+                })
+            })
+        }
+    }
+};
+
+export default user

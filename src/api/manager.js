@@ -61,9 +61,9 @@ export function adminAddManager(userId) {
 
 
 // 获取经理信息
-export function managerInfo(mid) {
+export function managerInfo() {
     return request({
-        url: '/manager/' + mid + '/info',
+        url: '/manager/info',
         method: 'get',
     })
 }
