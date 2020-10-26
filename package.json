@@ -1,7 +1,7 @@
 {
-  "name": "ticketmanagesystemfrontend",
+  "name": "seprojectmanagementsystem",
   "version": "1.0.0",
-  "description": "TicketManageSystem 前端",
+  "description": "软件工程项目管理系统",
   "author": "Kevin Axel",
   "private": true,
   "scripts": {

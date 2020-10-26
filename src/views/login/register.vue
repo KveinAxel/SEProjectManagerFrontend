@@ -10,18 +10,30 @@
                 <div style="text-align: center">
                     <svg-icon icon-class="login" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
                 </div>
-                <h2 class="login-title color-main">项目管理系统</h2>
-                <el-form-item prop="phone">
-                    <el-input name="phone"
+                <h2 class="login-title color-main">TicketManageSystem</h2>
+                <el-form-item prop="name">
+                    <el-input name="name"
                               type="text"
-                              v-model="registerForm.phone"
+                              v-model="registerForm.name"
                               autoComplete="on"
-                              placeholder="请输入手机号">
+                              placeholder="请输入昵称">
                         <span slot="prefix">
                             <svg-icon icon-class="user" class="color-main"></svg-icon>
                         </span>
                     </el-input>
                 </el-form-item>
+                <el-form-item prop="username">
+                    <el-input name="username"
+                              type="text"
+                              v-model="registerForm.username"
+                              autoComplete="on"
+                              placeholder="请输入用户名">
+                        <span slot="prefix">
+                            <svg-icon icon-class="user" class="color-main"></svg-icon>
+                        </span>
+                    </el-input>
+                </el-form-item>
+
                 <el-form-item prop="password">
                     <el-input name="password"
                               :type="pwdType"
@@ -62,95 +74,103 @@
 </template>
 
 <script>
-    import {register} from "@/api/user";
-    import {isvalidPhoneNumber} from "@/utils/validate";
+import {register} from "@/api/auth";
+import {isvalidUsername} from '@/utils/validate';
 
-    export default {
-        name: "register",
-        created() {
-        },
-        data() {
-            const validatePhone = (rule, value, callback) => {
-                if (!isvalidPhoneNumber(value)) {
-                    callback(new Error('请输入正确的手机号'));
-                } else {
-                    callback();
-                }
-            };
-            const validatePass = (rule, value, callback) => {
-                if (value.length < 3) {
-                    callback(new Error('密码不能小于3位'));
-                } else {
-                    callback()
-                }
-            };
-            const validateConfirmPass = (rule, value, callback) => {
-                if (value.length < 3) {
-                    callback(new Error('密码不能小于3位'));
-                } else {
-                    callback()
-                }
-            };
+export default {
+    name: "registerView",
+    created() {
+    },
+    data() {
 
-            return {
-                registerForm: {
-                    phone: '',
-                    password: '',
-                    confirmPassword: '',
-                },
-                registerRules: {
-                    phone: [{required: true, trigger: 'blur', validator: validatePhone}],
-                    password: [{required: true, trigger: 'blur', validator: validatePass}],
-                    confirmPassword: [{required: true, trigger: 'blur', validator: validateConfirmPass}],
-                },
-                loading: false,
-                pwdType: 'password',
+        const validateName = (rule, value, callback) => {
+            if (value.length < 3) {
+                callback(new Error('昵称不能小于3位'))
+            } else {
+                callback()
+            }
+        };
+        const validateUsername = (rule, value, callback) => {
+            if (!isvalidUsername(value)) {
+                callback(new Error('请输入正确的用户名'))
+            } else {
+                callback()
+            }
+        };
+        const validatePass = (rule, value, callback) => {
+            if (value.length < 3) {
+                callback(new Error('密码不能小于3位'))
+            } else {
+                callback()
+            }
+        };
+        const validateConfirmPass = (rule, value, callback) => {
+            if (value.length < 3) {
+                callback(new Error('密码不能小于3位'))
+            } else {
+                callback()
+            }
+        };
+
+        return {
+            registerForm: {
+                username: '',
+                name: '',
+                password: '',
+                confirmPassword: '',
+            },
+            registerRules: {
+                name: [{required: true, trigger: 'blur', validator: validateName}],
+                username: [{required: true, trigger: 'blur', validator: validateUsername}],
+                password: [{required: true, trigger: 'blur', validator: validatePass}],
+                confirmPassword: [{required: true, trigger: 'blur', validator: validateConfirmPass}],
+            },
+            loading: false,
+            pwdType: 'password',
+        }
+    },
+    methods: {
+        showPwd() {
+            if (this.pwdType === 'password') {
+                this.pwdType = ''
+            } else {
+                this.pwdType = 'password'
             }
         },
-        methods: {
-            showPwd() {
-                if (this.pwdType === 'password') {
-                    this.pwdType = ''
-                } else {
-                    this.pwdType = 'password'
-                }
-            },
-            handleRegister() {
-                this.$refs.registerForm.validate(valid => {
-                    if (valid) {
-                        this.loading = true;
-                        if (this.registerForm.password === this.registerForm.confirmPassword) {
-                            let params = new URLSearchParams();
-                            params.append('phone', this.registerForm.phone);
-                            params.append('password', this.registerForm.password);
-                            register(params).then(response => {
+        handleRegister() {
+            this.$refs.registerForm.validate(valid => {
+                if (valid) {
+                    this.loading = true;
+                    if (this.registerForm.password === this.registerForm.confirmPassword) {
+                        register(this.registerForm.username, this.registerForm.password, this.registerForm.name)
+                            .then(response => {
                                 this.$message(response.message);
                             });
-                            this.$router.push({path: '/login'});
-                        } else {
-                            this.$message('请确保两次密码相同!');
-                        }
+                        this.$router.push({path: '/login'});
                     } else {
-                        console.log('参数验证不合法！');
-                        return false
+                        this.$message('请确保两次密码相同!');
                     }
-                })
-            },
-        }
+                } else {
+                    console.log('参数验证不合法！');
+                    return false
+                }
+            })
+        },
     }
+}
 </script>
 
 <style scoped>
-    .register-form-layout {
-        position: absolute;
-        left: 0;
-        right: 0;
-        width: 360px;
-        margin: 100px auto;
-        border-top: 10px solid #409EFF;
-    }
+.register-form-layout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 360px;
+    margin: 100px auto;
+    border-top: 10px solid #409EFF;
+}
 
-    .login-title {
-        text-align: center;
-    }
+.login-title {
+    text-align: center;
+}
 </style>

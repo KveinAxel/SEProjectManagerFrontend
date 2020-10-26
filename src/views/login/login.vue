@@ -10,13 +10,13 @@
                 <div style="text-align: center">
                     <svg-icon icon-class="login" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
                 </div>
-                <h2 class="login-title color-main">项目管理系统</h2>
-                <el-form-item prop="phone" required>
-                    <el-input name="phone"
+                <h2 class="login-title color-main">TicketManageSystem</h2>
+                <el-form-item prop="username" required>
+                    <el-input name="username"
                               type="text"
-                              v-model="loginForm.phone"
+                              v-model="loginForm.username"
                               autoComplete="on"
-                              placeholder="请输入手机号">
+                              placeholder="请输入用户名">
                         <span slot="prefix">
                             <svg-icon icon-class="user" class="color-main"></svg-icon>
                         </span>
@@ -44,6 +44,7 @@
                     <el-button style="width: 45%" :loading="loading" @click="handleRegister">
                         注册
                     </el-button>
+
                 </el-form-item>
             </el-form>
         </el-card>
@@ -51,97 +52,96 @@
 </template>
 
 <script>
-    import login_center_bg from '@/assets/images/login_center_bg.png'
-    import {isvalidPhoneNumber} from "@/utils/validate";
-    import {login} from "@/api/auth";
+import {isvalidUsername} from '@/utils/validate';
+import login_center_bg from '@/assets/images/login_center_bg.png'
+import {setCookie,getCookie} from '@/utils/support';
 
-    export default {
-        name: 'loginView',
-        data() {
-            const validatePhoneNumber = (rule, value, callback) => {
-                if (!isvalidPhoneNumber(value)) {
-                    callback(new Error('请输入正确的用户名'))
-                } else {
-                    callback()
-                }
-            };
-            const validatePass = (rule, value, callback) => {
-                if (value.length < 3) {
-                    callback(new Error('密码不能小于3位'))
-                } else {
-                    callback()
-                }
-            };
-            return {
-                loginForm: {
-                    phone: '',
-                    password: '',
-                },
-                loginRules: {
-                    phone: [{required: true, trigger: 'blur', validator: validatePhoneNumber}],
-                    password: [{required: true, trigger: 'blur', validator: validatePass}]
-                },
-                loading: false,
-                pwdType: 'password',
-                login_center_bg,
+
+export default {
+    name: 'loginView',
+    created() {
+        this.loginForm.username = getCookie("username");
+        this.loginForm.password = getCookie("password");
+        if(this.loginForm.username === undefined||this.loginForm.username==null||this.loginForm.username===''){
+            this.loginForm.username = 'admin';
+        }
+        if(this.loginForm.password === undefined||this.loginForm.password==null){
+            this.loginForm.password = '';
+        }
+    },
+    data() {
+        const validateUsername = (rule, value, callback) => {
+            if (!isvalidUsername(value)) {
+                callback(new Error('请输入正确的用户名'))
+            } else {
+                callback()
+            }
+        };
+        const validatePass = (rule, value, callback) => {
+            if (value.length < 3) {
+                callback(new Error('密码不能小于3位'))
+            } else {
+                callback()
+            }
+        };
+        return {
+            loginForm: {
+                username: '',
+                password: '',
+            },
+            loginRules: {
+                username: [{required: true, trigger: 'blur', validator: validateUsername}],
+                password: [{required: true, trigger: 'blur', validator: validatePass}]
+            },
+            loading: false,
+            pwdType: 'password',
+            login_center_bg,
+        }
+    },
+    methods: {
+        showPwd() {
+            if (this.pwdType === 'password') {
+                this.pwdType = ''
+            } else {
+                this.pwdType = 'password'
             }
         },
-        methods: {
-            showPwd() {
-                if (this.pwdType === 'password') {
-                    this.pwdType = ''
+        handleLogin() {
+            this.$refs.loginForm.validate(valid => {
+                if (valid) {
+                    this.loading = true;
+                    this.$store.dispatch('Login', this.loginForm).then(() => {
+                        this.loading = false;
+                        setCookie("username",this.loginForm.username,15);
+                        setCookie("password",this.loginForm.password,15);
+                        this.$router.push({path: '/'})
+                    }).catch(() => {
+                        this.loading = false
+                    })
                 } else {
-                    this.pwdType = 'password'
+                    console.log('参数验证不合法！');
+                    return false
                 }
-            },
-            handleLogin() {
-                this.$refs.loginForm.validate(valid => {
-                    if (valid) {
-                        this.loading = true;
-                        let params = new URLSearchParams();
-                        params.append('phone', this.loginForm.phone);
-                        params.append('password', this.loginForm.password);
-                        login(params).then(response => {
-                            this.$message(response.message);
-                            this.loading = false;
-                            if(this.loginForm.admin === 'admin') {
-                                this.$router.push({path: '/admin'})
-                            } else {
-                                this.$router.push({path: '/user'})
-                            }
-                        }).catch(response => {
-                            this.loading = false;
-                            this.$message({
-                                message: response.message,
-                                type: 'warning'
-                            });
-
-                        })
-
-                    } else {
-                        console.log('参数验证不合法！');
-                        return false
-                    }
-                })
-            },
-            handleRegister() {
-                this.$router.push({path: '/register'})
-            }
+            })
+        },
+        handleRegister() {
+            this.$router.push({path: '/register'})
         }
     }
+}
 </script>
 
 <style scoped>
-    .login-form-layout {
-        position: absolute;
-        left: 0;
-        right: 0;
-        width: 360px;
-        margin: 100px auto;
-        border-top: 10px solid #409EFF;
-    }
+.login-form-layout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 360px;
+    margin: 100px auto;
+    border-top: 10px solid #409EFF;
+}
 
-    .login-title {
-        text-align: center;
-    }
+.login-title {
+    text-align: center;
+}
 </style>
