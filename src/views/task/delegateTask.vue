@@ -65,47 +65,6 @@ export default {
             canEdit: true, // todo handle auth can edit priviledge
             editingRow: {},
             editing: false,
-            mockTasks: [
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "previousId": [],
-                    "name": "TaskA",
-                    "type": "A",
-                    "undertaker": null, // 任务负责人
-                    "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
-                    "pendding": {
-                        'url': 'www.baidu.com'
-                    },
-                },
-                {
-                    "id": "5818852a16a511ebadc10242ac120002",
-                    "previousId": ["ff808081755a9f3101755ab92ce00001"],
-                    "name": "TaskB",
-                    "type": "B",
-                    "undertaker": null, // 任务负责人
-                    "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
-                    "pendding": {
-                        'url': 'www.baidu.com'
-                    },
-                },
-                {
-                    "id": "796d1f4216a511ebadc10242ac120002",
-                    "previousId": ["ff808081755a9f3101755ab92ce00001", "5818852a16a511ebadc10242ac120002"],
-                    "name": "TaskC",
-                    "type": "C",
-                    "undertaker": null, // 任务负责人
-                    "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
-                    "pendding": {
-                        'url': 'www.baidu.com'
-                    },
-                },
-            ],
-            mockManagers: [
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "name": "manager"
-                }
-            ]
 
         }
     },

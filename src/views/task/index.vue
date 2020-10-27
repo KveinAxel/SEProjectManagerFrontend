@@ -42,6 +42,10 @@
                 <el-table-column label="所属项目" width="120" align="center">
                     <template slot-scope="scope">{{ scope.row.project | formatProject }}</template>
                 </el-table-column>
+                <el-table-column label="任务进度" v-if="canEdit" width="120" align="center">
+                    <!--                    todo function: 把url加上url标签-->
+                    <template slot-scope="scope">{{ scope.row.pendding | formatDocument }}</template>
+                </el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <p>
@@ -98,12 +102,60 @@
                 <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
         </el-dialog>
+        <el-dialog
+            title="添加任务"
+            :visible.sync="addTaskDialogVisible"
+            width="40%">
+            <el-form autoComplete="on"
+                     :model="addTaskForm"
+                     :rules="addTaskRule"
+                     ref="addTaskForm"
+                     style="margin: auto 20px"
+                     label-position="left">
+                <el-form-item prop="previousTask" required>
+                    <el-input name="previousTask"
+                              type="text"
+                              v-model="addTaskForm.previousTask"
+                              autoComplete="on"
+                              placeholder="请选择依赖任务">
+                        <span slot="prefix">
+                            <svg-icon icon-class="user" class="color-main"></svg-icon>
+                        </span>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="name" required>
+                    <el-input name="name"
+                              type="text"
+                              v-model="addTaskForm.name"
+                              autoComplete="on"
+                              placeholder="请输入任务名">
+                        <span slot="prefix">
+                            <svg-icon icon-class="password" class="color-main"></svg-icon>
+                        </span>
+                    </el-input>
+                </el-form-item>
+                <el-form-item style="margin-bottom: 40px;text-align: center">
+                    <el-button style="width: 45%" type="primary" :loading="loading" @click="handleLogin">
+                        登录
+                    </el-button>
+                    <el-button style="width: 45%" :loading="loading" @click="handleRegister">
+                        注册
+                    </el-button>
+
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="addTaskDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleAddTaskConfirm">确 定</el-button>
+        </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 
 import {confirmTask, finishTask, rejectTask, updateTask} from "@/api/task";
+import store from "@/store";
 
 export default {
     name: 'listTasksView',
@@ -113,9 +165,16 @@ export default {
             tasks: [],
             isUploading: false,
             commitingId: null,
-            canEdit: true, // todo handle auth can edit priviledge
             editingRow: {},
             editing: false,
+            addTaskDialogVisible: false,
+            addTaskForm: {
+                "previousId": [],
+                "name": "",
+                "type": "",
+                "undertakerEid": "",
+                "projectId": ""
+            }
         }
     },
     created() {
@@ -124,9 +183,15 @@ export default {
     computed: {
         commitingUrl: function() {
             return 'http://localhost:8090/api/task/' + this.commitingId + '/commit';
-        }
+        },
+        canEdit() {
+            return store.getters.roles.indexOf('ROLE_MANAGER') !== -1;
+        },
     },
     methods: {
+        handleAddTaskConfirm() {
+            // todo
+        },
         handleCancelUpdate(index, row) {
             row = Object.assign(this.editingRow);
             this.editingRow = {};
@@ -357,7 +422,10 @@ export default {
         },
         formatEditting(editing) {
             return editing ? '完成编辑' : '编辑任务';
-        }
+        },
+        formatDocument(document) {
+            return document.url === null ? '未提交' : document.url;
+        },
     }
 }
 </script>

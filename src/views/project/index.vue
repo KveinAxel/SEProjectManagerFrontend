@@ -1,34 +1,5 @@
 <template>
     <div class="app-container">
-        <el-card class="filter-container" shadow="never" style="margin-top: 30px">
-            <div>
-                <i class="el-icon-search"></i>
-                <span>筛选搜索</span>
-                <el-button
-                    style="float: right"
-                    @click="handleSearchList()"
-                    type="primary"
-                    size="small">
-                    查询结果
-                </el-button>
-                <el-button
-                    style="float: right;margin-right: 15px"
-                    @click="handleResetSearch()"
-                    size="small">
-                    重置
-                </el-button>
-            </div>
-            <!--        todo Search Frame-->
-            <!--                    -->
-            <!--            <div style="margin-top: 30px">-->
-            <!--                <el-form :inline="true" :model="searchQuery" size="small" label-width="100px">-->
-            <!--                    <el-form-item label="航班号：">-->
-            <!--                        <el-input style="width: 180px" v-model="searchQuery.flight_number" placeholder="航班号"></el-input>-->
-            <!--                    </el-form-item>-->
-            <!--                </el-form>-->
-            <!--            </div>-->
-        </el-card>
-
         <el-card class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
             <span>项目列表</span>
@@ -61,19 +32,23 @@
                 <el-table-column label="项目状态" width="120" align="center">
                     <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
                 </el-table-column>
+                <el-table-column label="项目文档" width="120" align="center">
+                    <template slot-scope="scope">{{ scope.row.doc | formatDocument }}</template>
+                </el-table-column>
+
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <p>
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-show="isStop(scope.row.status) && canEdit"
+                                v-if="isStop(scope.row.status) && canEdit"
                                 @click="handleStartProject(scope.$index, scope.row)">开始
                             </el-button>
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-show="isStart(scope.row.status) && canEdit"
+                                v-if="isStart(scope.row.status) && canEdit"
                                 @click="handleStopProject(scope.$index, scope.row)">暂停
                             </el-button>
                             <el-button
@@ -91,18 +66,27 @@
 
 <script>
 
-import {generateProject, startProject, stopProject} from "../../api/project";
+import {generateProject, startProject, stopProject} from "@/api/project";
+import {listProject} from "@/api/project";
+import store from '@/store'
 
 export default {
     name: 'listProjectView',
     created() {
         this.getList();
     },
+    computed: {
+        canEdit() {
+            return store.getters.roles.indexOf('ROLE_MANAGER') !== -1;
+        },
+        // canRead() {
+        //     return store.getters.roles.indexOf('ROLE_ADMIN') !== -1 || this.canEdit;
+        // }
+    } ,
     data() {
         return {
             listLoading: true,
             projects: [],
-            canEdit: true, // todo handle auth can edit priviledge
             mockTasks: [
                 {
                     "id": "ff808081755a9f3101755ab92ce00001",
@@ -141,38 +125,16 @@ export default {
     methods: {
         getList() {
             this.listLoading = true;
-            // todo get project list
-            // for test
-            this.projects = [
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "name": "project1",
-                    "undertaker": Object.assign(this.mockManagers[0]), // 承办项目的经理
-                    "status": "INACTIVE",         // 停止 - INACTIVE；正在进行 - ACTIVE
-                },
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "name": "project2",
-                    "undertaker": Object.assign(this.mockManagers[0]), // 承办项目的经理
-                    "status": "INACTIVE",         // 停止 - INACTIVE；正在进行 - ACTIVE
-                },
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "name": "project3",
-                    "undertaker": Object.assign(this.mockManagers[0]), // 承办项目的经理
-                    "status": "ACTIVE",         // 停止 - INACTIVE；正在进行 - ACTIVE
-                },
-            ]
-            this.listLoading = false;
-        },
-        handleSearchList() {
-            this.$confirm('是否要进行查询', '提示', {
-                confirmButtonText: '是',
-                cancelButtonText: '否',
-                type: 'warning'
-            }).then(() => {
-                // todo handle search
+            listProject().then(response => {
+                this.project = response.status === 200 ? response.data : this.project;
+                const message = response.status === 200 ? '操作成功' : response.message;
+                const type = response.status === 200 ? 'success' : 'warning';
+                this.$message({
+                    message: message,
+                    type: type
+                });
             })
+            this.listLoading = false;
         },
         handleAddProject() {
             this.$confirm('是否要生成项目', '提示', {
@@ -181,18 +143,14 @@ export default {
                 type: 'warning'
             }).then(() => {
                 generateProject().then(response => {
-                    const message = response.status === '200' ? '操作成功' : response.message;
-                    const type = response.status === '200' ? 'success' : 'warning';
+                    const message = response.status === 200 ? '操作成功' : response.message;
+                    const type = response.status === 200 ? 'success' : 'warning';
                     this.$message({
                         message: message,
                         type: type
                     });
                 })
             })
-        },
-        handleResetSearch() {
-            // todo reset search
-            this.getList();
         },
         handleStartProject(index, row) {
             this.$confirm('是否要开始项目', '提示', {
@@ -201,8 +159,8 @@ export default {
                 type: 'warning'
             }).then(() => {
                 startProject(row.id).then(response => {
-                    const message = response.status === '200' ? '操作成功' : response.message;
-                    const type = response.status === '200' ? 'success' : 'warning';
+                    const message = response.status === 200 ? '操作成功' : response.message;
+                    const type = response.status === 200 ? 'success' : 'warning';
                     this.$message({
                         message: message,
                         type: type
@@ -217,8 +175,8 @@ export default {
                 type: 'warning'
             }).then(() => {
                 stopProject(row.id).then(response => {
-                    const message = response.status === '200' ? '操作成功' : response.message;
-                    const type = response.status === '200' ? 'success' : 'warning';
+                    const message = response.status === 200 ? '操作成功' : response.message;
+                    const type = response.status === 200 ? 'success' : 'warning';
                     this.$message({
                         message: message,
                         type: type
@@ -242,10 +200,15 @@ export default {
         },
         formatUndertaker(undertaker) {
             return undertaker.name;
+        },
+        formatProject(project) {
+            return project.name;
+        },
+        formatDocument(document) {
+            return document.url === null ? '未提交' : document.url;
         }
     }
 }
 </script>
-
 <style scoped>
 </style>
