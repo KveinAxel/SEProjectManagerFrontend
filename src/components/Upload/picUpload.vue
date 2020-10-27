@@ -1,38 +1,36 @@
 <template>
     <div>
         <el-upload
-            :data="dataObj"
             list-type="picture"
+            action="/api/resource/image"
             :multiple="false" :show-file-list="showFileList"
             :file-list="fileList"
             :on-remove="handleRemove"
-            :on-success="handleUploadSuccess"
             :on-preview="handlePreview"
-            :http-request="putFile">
+            :on-success="handleUploadSuccess"
+        >
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过10MB</div>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="fileList[0].url" :alt="fileList[0].name">
+            <img width="100%" :src="fileList[0].url" alt="">
         </el-dialog>
     </div>
 </template>
 <script>
 
-import {uploadPicture} from "@/api/resource";
-
 export default {
     name: 'picUpload',
     props: {
-        value
+        value: String
     },
     computed: {
         imageUrl() {
-            return this.value.url;
+            return this.value;
         },
         imageName() {
-            if (this.value != null && this.value.url !== '') {
-                return this.value.url.substr(this.value.lastIndexOf("/") + 1);
+            if (this.value != null && this.value !== '') {
+                return this.value.substr(this.value.lastIndexOf("/") + 1);
             } else {
                 return null;
             }
@@ -45,7 +43,7 @@ export default {
         },
         showFileList: {
             get: function () {
-                return this.value !== null  && this.value !== undefined && this.value.url !== '';
+                return this.value !== null && this.value !== '' && this.value !== undefined;
             },
             set: function (newValue) {
             }
@@ -53,7 +51,6 @@ export default {
     },
     data() {
         return {
-            dataObj: {},
             dialogVisible: false
         };
     },
@@ -73,19 +70,6 @@ export default {
             this.fileList.push({name: file.name, url: this.dataObj.host + '/' + this.dataObj.dir + '/' + file.name});
             this.emitInput(this.fileList[0].url);
         },
-        putFile(param) {
-            uploadPicture(param.file).then(response => {
-                if (response.status === '200') {
-                    this.value = response.data;
-                    this.$message({
-                        message: '上传成功',
-                        type: 'success'
-                    })
-                } else {
-                    this.$message.error(response.message);
-                }
-            })
-        }
     }
 }
 </script>

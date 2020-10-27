@@ -10,7 +10,7 @@
                 <div style="text-align: center">
                     <svg-icon icon-class="login" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
                 </div>
-                <h2 class="login-title color-main">TicketManageSystem</h2>
+                <h2 class="login-title color-main">软件工程项目管理</h2>
                 <el-form-item prop="username" required>
                     <el-input name="username"
                               type="text"
@@ -114,7 +114,7 @@ export default {
                         this.loading = false;
                         setCookie("username",this.loginForm.username,15);
                         setCookie("password",this.loginForm.password,15);
-                        this.$router.push({path: '/'})
+                        this.$router.push({path: '/'});
                     }).catch(() => {
                         this.loading = false
                     })

@@ -17,7 +17,7 @@ export const constantRouterMap = [
         children: [{
             path: 'home',
             name: 'home',
-            component: () => import('@/views/project/index'),
+            component: () => import('@/views/home/index'),
             meta: {title: '首页', icon: 'home'}
         }]
     },
@@ -32,7 +32,7 @@ export const constantRouterMap = [
                 path: 'project',
                 name: 'project',
                 component: () => import('@/views/project/index'),
-                meta: {title: '项目列表', icon: 'project-list'} // todo icon
+                meta: {title: '项目列表', icon: 'tree'}
             },
             {
                 path: 'projectDetail',
@@ -48,19 +48,13 @@ export const constantRouterMap = [
         component: Layout,
         redirect: '/task/task',
         name: 'task',
-        meta: {title: '任务', icon: 'task'},
+        meta: {title: '任务'},
         children: [
             {
                 path: 'task',
                 name: 'task',
                 component: () => import('@/views/task/index'),
-                meta: {title: '任务列表', icon: 'task-list'} // todo icon
-            },
-            {
-                path: 'delegateTask',
-                name: 'delegateTask',
-                component: () => import('@/views/task/delegateTask'),
-                meta: {title: '委派任务'},
+                meta: {title: '任务列表', icon: 'marker'}
             },
             {
                 path: 'taskDetail',
@@ -71,6 +65,37 @@ export const constantRouterMap = [
             },
         ]
     },
+    {
+        path: '/delegate',
+        component: Layout,
+        redirect: '/delegate/task',
+        name: 'delegate',
+        meta: {title: '任务'},
+        children: [
+            {
+                path: 'task',
+                name: 'delegateTask',
+                component: () => import('@/views/task/delegateTask'),
+                meta: {title: '委派任务', icon: 'table'},
+            },
+        ]
+    },
+    {
+        path: '/user',
+        component: Layout,
+        redirect: '/user/user',
+        name: 'delegate',
+        meta: {title: '用户'},
+        children: [
+            {
+                path: 'user',
+                name: 'user',
+                component: () => import('@/views/user/index'),
+                meta: {title: '个人中心', icon: 'user'},
+            },
+        ]
+    },
+
     {path: '*', redirect: '/404', hidden: true}
 ];
 

@@ -286,7 +286,7 @@ const mockUpdateUser = function () {
     return {
         "status": 200,
         "message": null,
-        "data":mockUser,
+        "data": mockUser,
     };
 };
 Mock.mock(/\/api\/user\/.{32}\/update/, 'post', mockUpdateUser);
@@ -419,5 +419,4 @@ const mockImage = function () {
         "data": mockResource
     };
 };
-Mock.mock('/api/resource/image', 'put', mockImage);
-
+Mock.mock('/api/resource/image', 'post', mockImage);

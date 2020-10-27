@@ -1,9 +1,8 @@
-    import {login, refresh} from '@/api/auth'
+import {login, refreshLogin} from '@/api/auth'
 import {getToken, setToken, removeToken} from '@/utils/auth'
 import {userInfo} from "@/api/user";
 import {managerInfo} from "../../api/manager";
 import {employeeInfo} from "../../api/employee";
-    import {refreshLogin} from "../../api/auth";
 
 const user = {
     state: {
