@@ -27,7 +27,7 @@ export function stopProject(id) {
 // 生成项目
 export function generateProject() {
     return request({
-        url: '/project/gen',
+        url: '/project/generate',
         method: 'post',
     })
 }
@@ -35,7 +35,7 @@ export function generateProject() {
 // 查询项目信息
 export function projectInfo(id) {
     return request({
-        url: '/project/' + id + '/info',
+        url: '/project/' + id,
         method: 'get',
     })
 }

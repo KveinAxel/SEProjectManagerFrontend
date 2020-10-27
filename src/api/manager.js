@@ -1,18 +1,18 @@
 import request from '@/utils/request'
 
 // 向经理的组内增加员工
-export function addEmployee(mid, params) {
+export function managerAddEmployee(mid, params) {
     return request({
-        url: '/manager/' + mid + '/add/',
+        url: '/manager/' + mid + '/employee/add/',
         method: 'post',
         params: params
     })
 }
 
 // 从经理组内移除员工
-export function removeEmployee(mid, params) {
+export function managerRemoveEmployee(mid, params) {
     return request({
-        url: '/manager/' + mid + '/remove/',
+        url: '/manager/' + mid + '/employee/remove/',
         method: 'post',
         params: params
     })
@@ -49,12 +49,13 @@ export function updateManager(mid, name) {
 
 
 // 管理员增加经理
-export function adminAddManager(userId) {
+export function addManager(name, uid) {
     return request({
         url: '/manager/add',
         method: 'post',
         data: {
-            'userId': userId
+            'name': name,
+            'uid': uid
         }
     })
 }
