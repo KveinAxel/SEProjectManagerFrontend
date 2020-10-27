@@ -37,12 +37,14 @@ export function listTask(id) {
 }
 
 // 查看自己的任务
-export function addEmployee(userId) {
+export function addEmployee(uid, name, type) {
     return request({
         url: '/employee/add',
         method: 'post',
         data: {
-            'userId': userId,
+            'name': name,
+            'type': type,
+            'uid': uid,
         }
     })
 }

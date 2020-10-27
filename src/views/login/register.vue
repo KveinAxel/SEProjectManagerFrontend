@@ -11,12 +11,15 @@
                     <svg-icon icon-class="login" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
                 </div>
                 <h2 class="login-title color-main">TicketManageSystem</h2>
+                <el-form-item label="头像：" prop="icon">
+                    <pic-upload v-model="registerForm.avatar"></pic-upload>
+                </el-form-item>
                 <el-form-item prop="name">
                     <el-input name="name"
                               type="text"
                               v-model="registerForm.name"
                               autoComplete="on"
-                              placeholder="请输入昵称">
+                              placeholder="请输入姓名">
                         <span slot="prefix">
                             <svg-icon icon-class="user" class="color-main"></svg-icon>
                         </span>
@@ -62,6 +65,13 @@
                         </span>
                     </el-input>
                 </el-form-item>
+                <el-form-item label="工作类型" required>
+                    <el-radio-group v-model="registerForm.type">
+                        <el-radio label="A"></el-radio>
+                        <el-radio label="B"></el-radio>
+                        <el-radio label="C"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item style="margin-bottom: 40px;text-align: center">
                     <el-button style="width: 45%" type="primary" :loading="loading"
                                @click.native.prevent="handleRegister">
@@ -76,16 +86,18 @@
 <script>
 import {register} from "@/api/auth";
 import {isvalidUsername} from '@/utils/validate';
+import PicUpload from "@/components/Upload/picUpload";
 
 export default {
     name: "registerView",
+    components: {PicUpload},
     created() {
     },
     data() {
 
         const validateName = (rule, value, callback) => {
-            if (value.length < 3) {
-                callback(new Error('昵称不能小于3位'))
+            if (value.length < 2) {
+                callback(new Error('姓名字数不能小于2'))
             } else {
                 callback()
             }
@@ -118,6 +130,8 @@ export default {
                 name: '',
                 password: '',
                 confirmPassword: '',
+                type: '',
+                avatar: '',
             },
             registerRules: {
                 name: [{required: true, trigger: 'blur', validator: validateName}],

@@ -1,14 +1,16 @@
 <template>
     <div class="app-container">
+
         <el-card class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
             <span>项目列表</span>
             <el-button
                 class="btn-add"
                 type="info"
+                style="margin-right: 30px"
                 @click="handleAddProject"
                 v-show="canEdit"
-                size="mini">
+                size="small">
                 生成项目
             </el-button>
         </el-card>
@@ -210,5 +212,11 @@ export default {
     }
 }
 </script>
+
 <style scoped>
+.app-container {
+    margin-top: 30px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
 </style>

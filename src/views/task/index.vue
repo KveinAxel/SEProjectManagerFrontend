@@ -52,11 +52,6 @@
                             <el-button
                                 size="medium"
                                 type="info"
-                                @click="handleShowDeps(scope.$index, scope.row)">查看前置
-                            </el-button>
-                            <el-button
-                                size="medium"
-                                type="info"
                                 v-if="canDelegate(scope.status)"
                                 @click="handleDelegate(scope.$index, scope.row)">委托任务
                             </el-button>
@@ -303,9 +298,6 @@ export default {
                 })
             })
         },
-        handleShowDeps(index, row) {
-            // todo
-        },
         getList() {
             // todo get task list
             // for test
@@ -430,5 +422,11 @@ export default {
 }
 </script>
 
+
 <style scoped>
+.app-container {
+    margin-top: 30px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
 </style>

@@ -21,14 +21,15 @@ export function refreshLogin() {
 }
 
 // 注册
-export function register(username, password, name) {
+export function register(username, password, name, type) {
     return request({
         url: '/auth/register',
         method: 'post',
         data: {
             'username': username,
             'password': password,
-            'name': name
+            'name': name,
+            'type': type,
         }
     })
 }

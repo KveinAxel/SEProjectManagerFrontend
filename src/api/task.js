@@ -13,17 +13,17 @@ export function delegateTask(id, delegateTo, expire) {
 }
 
 // 更新任务信息
-export function updateTask(id, previousId, name, type, undertaker, status, project) {
+export function updateTask(id, previousIds, name, type, undertakerEid, status, projectId) {
     return request({
         url: '/task/' + id + '/update',
         method: 'post',
         data: {
-            'previousId': previousId,
+            'previousId': previousIds,
             'name': name,
             'type': type,
-            'undertaker': undertaker,
+            'undertakerEid': undertakerEid,
             'status': status,
-            'project': project,
+            'projectId': project,
         }
     })
 }
@@ -38,7 +38,7 @@ export function updateTaskBatch(data) {
 }
 
 // 增加任务
-export function addTask(previousId, name, type, undertaker, project) {
+export function addTask(previousId, name, type, undertakerEid, projectId) {
     return request({
         url: '/task/add',
         method: 'post',
@@ -46,8 +46,8 @@ export function addTask(previousId, name, type, undertaker, project) {
             'previousId': previousId,
             'name': name,
             'type': type,
-            'undertaker': undertaker,
-            'project': project,
+            'undertakerEid': undertakerEid,
+            'projectId': projectId,
         }
     })
 }
@@ -61,11 +61,11 @@ export function taskInfo(id) {
 }
 
 // 任务送审
-export function commitTask(id, data) {
+export function commitTask(id, params) {
     return request({
         url: '/task/' + id + '/commit',
         method: 'post',
-        data: data
+        params: params
     })
 }
 
@@ -98,14 +98,5 @@ export function withdrawTask(id) {
     return request({
         url: '/task/' + id + '/withdraw',
         method: 'post',
-    })
-}
-
-// 获取一个项目下的所有任务
-export function listProjectTask(params) {
-    return request({
-        url: '/task/project',
-        method: 'get',
-        params: params
     })
 }
