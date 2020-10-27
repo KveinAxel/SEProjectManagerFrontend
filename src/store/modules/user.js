@@ -1,19 +1,21 @@
 import {login, refreshLogin} from '@/api/auth'
 import {getToken, setToken, removeToken} from '@/utils/auth'
 import {userInfo} from "@/api/user";
-import {managerInfo} from "../../api/manager";
-import {employeeInfo} from "../../api/employee";
+import {managerInfo} from "@/api/manager";
+import {employeeInfo} from "@/api/employee";
+import {getEiD, getMiD, getRoles, removeEid, removeMid, removeRoles, setEid, setMid, setRoles} from "../../utils/auth";
 
 const user = {
     state: {
         token: getToken(),
         name: '',
         avatar: '',
-        eid: '',
+        eid: getEiD(),
         ename: '',
-        mid: '',
+        mid: getMiD(),
         mname: '',
-        roles: []
+        roles: getRoles()
+
     },
 
     mutations: {
@@ -52,6 +54,7 @@ const user = {
                     commit('SET_NAME', data.username);
                     setToken(tokenStr);
                     commit('SET_TOKEN', tokenStr);
+                    setRoles(roles);
                     commit('SET_ROLES', roles);
                     resolve()
                 }).catch(error => {
@@ -65,8 +68,7 @@ const user = {
             return new Promise((resolve, reject) => {
                 userInfo().then(response => {
                     const data = response.data;
-                    // todo add avatar
-                    // commit('SET_AVATAR', data.avatar);
+                    commit('SET_AVATAR', data.avatar);
                     resolve(response)
                 }).catch(error => {
                     reject(error)
@@ -91,6 +93,9 @@ const user = {
             return new Promise(resolve => {
                 commit('SET_TOKEN', '');
                 removeToken();
+                removeEid();
+                removeMid();
+                removeRoles();
                 resolve()
             })
         },
@@ -101,6 +106,7 @@ const user = {
                 managerInfo().then(response => {
                     const id = response.data.id;
                     const name = response.data.name;
+                    setMid(id);
                     commit("SET_MANAGER", id, name);
                     resolve();
                 })
@@ -113,6 +119,7 @@ const user = {
                 employeeInfo().then(response => {
                     const id = response.data.id;
                     const name = response.data.name;
+                    setEid(id);
                     commit("SET_EMPLOYEE", id, name);
                     resolve();
                 })

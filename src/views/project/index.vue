@@ -35,7 +35,10 @@
                     <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
                 </el-table-column>
                 <el-table-column label="项目文档" width="120" align="center">
-                    <template slot-scope="scope">{{ scope.row.doc | formatDocument }}</template>
+                    <template slot-scope="scope">
+                        <a v-if="scope.row.doc !== null" :href="scope.row.doc.url">{{ scope.row.doc | formatDocument }}</a>
+                        <span v-else>{{ scope.row.doc | formatDocument }}</span>
+                    </template>
                 </el-table-column>
 
                 <el-table-column label="操作" align="center">
@@ -81,64 +84,27 @@ export default {
         canEdit() {
             return store.getters.roles.indexOf('ROLE_MANAGER') !== -1;
         },
-        // canRead() {
-        //     return store.getters.roles.indexOf('ROLE_ADMIN') !== -1 || this.canEdit;
-        // }
     } ,
     data() {
         return {
             listLoading: true,
-            projects: [],
-            mockTasks: [
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "previousId": [],
-                    "name": "TaskA",
-                    "type": "A",
-                    "undertaker": null, // 任务负责人
-                    "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
-                },
-                {
-                    "id": "5818852a16a511ebadc10242ac120002",
-                    "previousId": ["ff808081755a9f3101755ab92ce00001"],
-                    "name": "TaskB",
-                    "type": "B",
-                    "undertaker": null, // 任务负责人
-                    "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
-                },
-                {
-                    "id": "796d1f4216a511ebadc10242ac120002",
-                    "previousId": ["ff808081755a9f3101755ab92ce00001", "5818852a16a511ebadc10242ac120002"],
-                    "name": "TaskC",
-                    "type": "C",
-                    "undertaker": null, // 任务负责人
-                    "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
-                },
-            ],
-            mockManagers: [
-                {
-                    "id": "ff808081755a9f3101755ab92ce00001",
-                    "name": "manager"
-                }
-            ]
-
+            projects: []
         }
     },
     methods: {
         getList() {
             this.listLoading = true;
             listProject().then(response => {
-                this.project = response.status === 200 ? response.data : this.project;
-                const message = response.status === 200 ? '操作成功' : response.message;
-                const type = response.status === 200 ? 'success' : 'warning';
-                this.$message({
-                    message: message,
-                    type: type
-                });
+                if (response.status === 200) {
+                    this.projects = response.data;
+                } else {
+                    this.$message.error(response.message);
+                }
             })
             this.listLoading = false;
         },
         handleAddProject() {
+            // todo 变更api
             this.$confirm('是否要生成项目', '提示', {
                 confirmButtonText: '是',
                 cancelButtonText: '否',

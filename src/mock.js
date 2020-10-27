@@ -4,8 +4,8 @@ const Mock = require('mockjs');
 const mockUser = {
     "id": "ff808081755a9f3101755ab92ce00001",
     "username": "user",
-    "roles": ["ROLE_EMPLOYEE"],
-    "avatar": ''
+    "roles": ["ROLE_MANAGER"],
+    "avatar": 'https://imgchr.com/i/BlykQS'
 }
 
 const mockManager = {
@@ -38,6 +38,7 @@ const mockProject = {
     "doc": mockResource
 };
 
+
 const mockTask1 = {
     "id": "ff808081755a9f3101755ab92ce00001",
     "previousId": [],
@@ -46,7 +47,8 @@ const mockTask1 = {
     "undertaker": mockManager, // 任务负责人
     "status": "CREATED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
     "project": mockProject,
-    "pendding": mockResource
+    "pending": mockResource,
+    "delegate": true,
 };
 
 const mockTask2 = {
@@ -57,7 +59,9 @@ const mockTask2 = {
     "undertaker": mockManager, // 任务负责人
     "status": "ACTIVE",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
     "project": mockProject,
-    "pendding": mockResource
+    "pending": mockResource,
+    "delegate": true,
+
 }
 
 const mockTask3 = {
@@ -68,10 +72,10 @@ const mockTask3 = {
     "undertaker": null, // 任务负责人
     "status": "WAIT_COMMIT",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
     "project": mockProject,
-    "pendding": mockResource
+    "pending": mockResource,
+    "delegate": false,
 
 }
-
 
 const mockDelegate = {
     "id": "123asd",
@@ -134,6 +138,15 @@ const mockAddManager = function () {
     };
 };
 Mock.mock('/api/manager/add', 'post', mockAddManager);
+
+const mockManagerListTask = function () {
+    return {
+        "status": 200,
+        "message": null,
+        "data": [mockTask1, mockTask2],
+    };
+};
+Mock.mock(/\/api\/manager\/.{32}\/task/, 'get', mockManagerListTask);
 
 const mockManagerInfo = function () {
     return {
@@ -373,7 +386,7 @@ const mockLogin = function () {
                 "expired": 1000000000    // 令牌有效期
             },
             "username": "admin",           // 用户名
-            "roles": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_EMPLOYEE"]       // 角色
+            "roles": mockUser.roles       // 角色
         },
     };
 };

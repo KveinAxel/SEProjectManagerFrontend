@@ -2,7 +2,7 @@
     <div class="app-container">
         <el-card class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
-            <span>委托任务</span>
+            <span>任务列表</span>
         </el-card>
         <div class="table-container">
             <el-table ref="taskTable"
@@ -43,32 +43,96 @@
                             <el-button
                                 size="medium"
                                 type="info"
+                                v-if="canDelegate(scope.delegate)"
+                                @click="handleDelegate(scope.$index, scope.row)">委托任务
+                            </el-button>
+                            <el-button
+                                size="medium"
+                                type="info"
+                                v-if="!canDelegate(scope.delegate)"
                                 @click="handleWithdraw(scope.$index, scope.row)">收回任务
+                            </el-button>
+                            <el-button
+                                size="medium"
+                                type="primary"
+                                v-show="canFinish(scope.row.status)"
+                                @click="handleFinish(scope.$index, scope.row)">完成任务
+                            </el-button>
+                            <el-button
+                                size="medium"
+                                type="primary"
+                                v-show="canCommit(scope.row.status)"
+                                @click="handleCommit(scope.$index, scope.row)">上交任务
                             </el-button>
                         </p>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
+        <el-dialog title="提交任务文件"
+                   :visible.sync="isUploading"
+        >
+<!--            todo -->
+            <el-upload
+                drag
+                v-bind:action="commitingUrl"
+                multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+        </el-dialog>
     </div>
 </template>
 <script>
 
+    import {finishTask} from "@/api/task";
     import store from "@/store";
     import {withdrawTask} from "@/api/task";
-    import {listDelegate} from "../../api/employee";
+    import {listTask} from "@/api/employee";
 
     export default {
         name: 'employeeListTasksView',
         data() {
+            const validateName = (rule, value, callback) => {
+                if (value.length < 2) {
+                    callback(new Error('姓名字数不能小于2'))
+                } else {
+                    callback()
+                }
+            };
             return {
+                addTaskForm: {
+                    "previousId": [],
+                    "name": "",
+                    "type": "",
+                    "undertakerEid": "",
+                    "projectId": ""
+                },
+                defaultAddTaskForm: {
+                    "previousId": [],
+                    "name": "",
+                    "type": "",
+                    "undertakerEid": "",
+                    "projectId": ""
+                },
+                addTaskRules: {
+                    name: [{required: true, trigger: 'blur', validator: validateName}],
+                },
                 listLoading: true,
                 tasks: [],
-                delegates: [],
+                isUploading: false,
+                commitingId: null,
+                addTaskDialogVisible: false,
             }
         },
         created() {
             this.getList();
+        },
+        computed: {
+            commitingUrl: function () {
+                return 'http://localhost:8090/api/task/' + this.commitingId + '/commit';
+            },
         },
         methods: {
             handleInfo(row, column, event) {
@@ -90,22 +154,61 @@
                     })
                 })
             },
+            handleFinish(index, row) {
+                this.$confirm('是否要结束任务,并进入提交阶段', '提示', {
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    type: 'warning'
+                }).then(() => {
+                    finishTask(row.id).then(response => {
+                        const message = response.status === 200 ? '操作成功' : response.message;
+                        const type = response.status === 200 ? 'success' : 'warning';
+                        this.$message({
+                            message: message,
+                            type: type
+                        });
+                    })
+                })
+            },
+            handleCommit(index, row) {
+                this.isUploading = true;
+                this.commitingId = row.id;
+            },
+            handleDelegate(index, row) {
+                this.$confirm('是否要将该任务委托给他人', '提示', {
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    type: 'warning'
+                }).then(() => {
+                    finishTask(row.id).then(response => {
+                        const message = response.status === 200 ? '操作成功' : response.message;
+                        const type = response.status === 200 ? 'success' : 'warning';
+                        this.$message({
+                            message: message,
+                            type: type
+                        });
+                    })
+                })
+            },
             getList() {
                 this.listLoading = true;
-                listDelegate(store.getters.eid).then(response => {
+                listTask(store.getters.eid).then(response => {
                     if (response.status !== 200) {
                         this.$message.error(response.message);
                     } else {
-                        this.delegates = response.data;
-                        for (let item of this.delegates) {
-                            this.tasks.push(item.task);
-                        }
+                        this.tasks = response.data;
                     }
                     this.listLoading = false;
                 })
             },
             canDelegate(delegate) {
                 return delegate !== null;
+            },
+            canFinish(status) {
+                return status === 'ACTIVE';
+            },
+            canCommit(status) {
+                return status === 'WAIT_COMMIT';
             },
         },
         filters: {

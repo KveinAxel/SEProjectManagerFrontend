@@ -4,7 +4,10 @@
 
 <script>
 export default {
-name: "taskInfo"
+    name: "taskInfo",
+    props: {
+        task: Object
+    }
 }
 </script>
 

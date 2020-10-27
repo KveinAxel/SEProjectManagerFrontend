@@ -69,5 +69,13 @@ export function managerInfo() {
     })
 }
 
+// 查看自己的任务
+export function listTask(id) {
+    return request({
+        url: '/manager/' + id + '/task',
+        method: 'get',
+    })
+}
+
 
 

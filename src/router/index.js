@@ -4,6 +4,9 @@ import Router from 'vue-router'
 Vue.use(Router);
 
 import Layout from '../views/layout/Layout'
+import store from "../store";
+
+
 
 export const constantRouterMap = [
     { path: '/login',    component: () => import('@/views/login/index'),     hidden: true},
@@ -11,7 +14,7 @@ export const constantRouterMap = [
     { path: '/404',      component: () => import('@/views/404'),             hidden: true},
     { path: '/user',     component: () => import('@/views/user/index'),      hidden: true},
     {
-        path: '/',
+        path: '',
         component: Layout,
         redirect: '/home',
         children: [{
@@ -46,16 +49,31 @@ export const constantRouterMap = [
     {
         path: '/task',
         component: Layout,
-        redirect: '/task/task',
+        redirect: '/task/listTask',
         name: 'task',
         meta: {title: '任务'},
         children: [
             {
-                path: 'task',
-                name: 'task',
+                path: 'listTask',
+                name: 'listTask',
                 component: () => import('@/views/task/index'),
-                meta: {title: '任务列表', icon: 'marker'}
+                meta: {title: '任务列表', icon: 'marker'},
             },
+            {
+                path: 'manager',
+                name: 'manager',
+                component: () => import('@/views/task/managerListTask'),
+                meta: {title: '任务列表', icon: 'marker'},
+                hidden: true
+            },
+            {
+                path: 'employee',
+                name: 'employee',
+                component: () => import('@/views/task/employeeListTask'),
+                meta: {title: '任务列表', icon: 'marker'},
+                hidden: true
+            },
+
             {
                 path: 'taskDetail',
                 name: 'taskDetail',
@@ -63,6 +81,7 @@ export const constantRouterMap = [
                 meta: {title: '任务详情'},
                 hidden: true
             },
+
         ]
     },
     {
@@ -92,6 +111,20 @@ export const constantRouterMap = [
                 name: 'user',
                 component: () => import('@/views/user/index'),
                 meta: {title: '个人中心', icon: 'user'},
+            },
+            {
+                path: 'managerUser',
+                name: 'managerUser',
+                component: () => import('@/views/user/managerUser'),
+                meta: {title: '个人中心', icon: 'user'},
+                hidden: true
+            },
+            {
+                path: 'employeeUser',
+                name: 'employeeUser',
+                component: () => import('@/views/user/employeeUser'),
+                meta: {title: '个人中心', icon: 'user'},
+                hidden: true
             },
         ]
     },
