@@ -1,33 +1,5 @@
 <template>
     <div class="app-container">
-        <el-card class="filter-container" shadow="never" style="margin-top: 30px">
-            <div>
-                <i class="el-icon-search"></i>
-                <span>筛选搜索</span>
-                <el-button
-                    style="float: right"
-                    @click="handleSearchList()"
-                    type="primary"
-                    size="small">
-                    查询结果
-                </el-button>
-                <el-button
-                    style="float: right;margin-right: 15px"
-                    @click="handleResetSearch()"
-                    size="small">
-                    重置
-                </el-button>
-            </div>
-            <!--        todo Search Frame-->
-            <!--                    -->
-            <!--            <div style="margin-top: 30px">-->
-            <!--                <el-form :inline="true" :model="searchQuery" size="small" label-width="100px">-->
-            <!--                    <el-form-item label="航班号：">-->
-            <!--                        <el-input style="width: 180px" v-model="searchQuery.flight_number" placeholder="航班号"></el-input>-->
-            <!--                    </el-form-item>-->
-            <!--                </el-form>-->
-            <!--            </div>-->
-        </el-card>
 
         <el-card class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
@@ -35,9 +7,10 @@
             <el-button
                 class="btn-add"
                 type="info"
+                style="margin-right: 30px"
                 @click="handleAddProject"
                 v-show="canEdit"
-                size="mini">
+                size="small">
                 生成项目
             </el-button>
         </el-card>
@@ -67,13 +40,13 @@
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-show="isStop(scope.row.status) && canEdit"
+                                v-if="isStop(scope.row.status) && canEdit"
                                 @click="handleStartProject(scope.$index, scope.row)">开始
                             </el-button>
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-show="isStart(scope.row.status) && canEdit"
+                                v-if="isStart(scope.row.status) && canEdit"
                                 @click="handleStopProject(scope.$index, scope.row)">暂停
                             </el-button>
                             <el-button
@@ -181,8 +154,8 @@ export default {
                 type: 'warning'
             }).then(() => {
                 generateProject().then(response => {
-                    const message = response.status === '200' ? '操作成功' : response.message;
-                    const type = response.status === '200' ? 'success' : 'warning';
+                    const message = response.status === 200 ? '操作成功' : response.message;
+                    const type = response.status === 200 ? 'success' : 'warning';
                     this.$message({
                         message: message,
                         type: type
@@ -201,8 +174,8 @@ export default {
                 type: 'warning'
             }).then(() => {
                 startProject(row.id).then(response => {
-                    const message = response.status === '200' ? '操作成功' : response.message;
-                    const type = response.status === '200' ? 'success' : 'warning';
+                    const message = response.status === 200 ? '操作成功' : response.message;
+                    const type = response.status === 200 ? 'success' : 'warning';
                     this.$message({
                         message: message,
                         type: type
@@ -217,8 +190,8 @@ export default {
                 type: 'warning'
             }).then(() => {
                 stopProject(row.id).then(response => {
-                    const message = response.status === '200' ? '操作成功' : response.message;
-                    const type = response.status === '200' ? 'success' : 'warning';
+                    const message = response.status === 200 ? '操作成功' : response.message;
+                    const type = response.status === 200 ? 'success' : 'warning';
                     this.$message({
                         message: message,
                         type: type
