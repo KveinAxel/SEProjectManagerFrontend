@@ -14,7 +14,7 @@ import router from './router'
 
 import '@/icons' // icon
 import echarts from 'echarts'
-import websocket from "./websocket";
+
 Vue.use(ElementUI, {locale});
 
 Vue.use(VCharts);
@@ -24,8 +24,8 @@ new Vue({
     el: '#app',
     router,
     store,
-    template: '<div><App/><websocket/></div>',
-    components: {App, websocket}
+    template: '<App/>',
+    components: {App}
 });
 
 Vue.prototype.$echarts = echarts;

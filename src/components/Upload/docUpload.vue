@@ -6,6 +6,7 @@
             :multiple="false" :show-file-list="showFileList"
             :file-list="fileList"
             :on-remove="handleRemove"
+            :headers="head"
             :on-preview="handlePreview"
             :on-success="handleUploadSuccess"
         >
@@ -18,6 +19,8 @@
     </div>
 </template>
 <script>
+
+import {getToken} from "../../utils/auth";
 
 export default {
     name: 'docUpload',
@@ -51,7 +54,11 @@ export default {
     },
     data() {
         return {
-            dialogVisible: false
+            dialogVisible: false,
+            head: {
+                'Authorization': getToken()
+
+            }
         };
     },
     methods: {
@@ -65,6 +72,7 @@ export default {
             this.dialogVisible = true;
         },
         handleUploadSuccess(res, file) {
+            window.resourceObject = res.data;
             this.showFileList = true;
             this.fileList.pop();
             this.fileList.push({name: file.name, url: this.dataObj.host + '/' + this.dataObj.dir + '/' + file.name});

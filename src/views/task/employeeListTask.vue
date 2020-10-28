@@ -51,7 +51,8 @@
                                 v-if="!canDelegate(scope.delegate)"
                                 @click="handleWithdraw(scope.$index, scope.row)">收回任务
                             </el-button>
-                        </p><p>
+                        </p>
+                        <p>
                             <el-button
                                 size="medium"
                                 type="primary"
@@ -72,20 +73,19 @@
         <el-dialog title="提交任务文件"
                    :visible.sync="isUploading"
         >
-            <!--            todo -->
-            <el-upload
-                drag
-                v-bind:action="commitingUrl"
-                multiple>
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
+            <!--        todo -->
+            <doc-upload></doc-upload>
+            <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="isUploading=false">取 消</el-button>
+            <el-button type="primary" @click="handleUploadDoc">确 定</el-button>
+            </span>
         </el-dialog>
         <el-dialog title="委托任务" :visible.sync="delegateTaskDialogVisible">
-            <div><el-transfer filterable :filter-method="filterMethod" filter-placeholder="请输入姓名"
-                         :titles="['名单', '委托人']"
-                              v-model="delegateSelected" :data="employees"></el-transfer></div>
+            <div>
+                <el-transfer filterable :filter-method="filterMethod" filter-placeholder="请输入姓名"
+                             :titles="['名单', '委托人']"
+                             v-model="delegateSelected" :data="employees"></el-transfer>
+            </div>
             <div style="margin-top: 20px">
                 收回日期
                 <el-switch
@@ -118,10 +118,12 @@
     import {withdrawTask} from "@/api/task";
     import {listTask} from "@/api/employee";
     import {listEmployee} from "../../api/employee";
-    import {delegateTask} from "../../api/task";
+    import {commitTask, delegateTask} from "../../api/task";
+    import DocUpload from "../../components/Upload/docUpload";
 
     export default {
         name: 'employeeListTasksView',
+        components: {DocUpload},
         data() {
             const validateName = (rule, value, callback) => {
                 if (value.length < 2) {
@@ -176,9 +178,7 @@
                 commitingId: null,
                 addTaskDialogVisible: false,
                 delegateTaskDialogVisible: false,
-                task: {
-
-                }
+                task: {}
             }
         },
         created() {
@@ -190,9 +190,24 @@
             },
         },
         methods: {
+            handleUploadDoc() {
+                let resourceObject = window.resourceObject;
+                console.log(resourceObject.id);
+                commitTask(this.commitingId, resourceObject.id).then(response => {
+                    if (response.status === 200) {
+                        this.$message({
+                            type: 'success',
+                            message: '文档提交成功'
+                        })
+                    } else {
+                        this.$message.error(response.message);
+                    }
+                });
+                this.isUploading = false;
+            },
             getUrl(doc) {
-                if(doc) {
-                    return doc.url;
+                if (doc) {
+                    return '/api' + doc.url;
                 } else {
                     return doc;
                 }
@@ -296,7 +311,7 @@
                 return delegate !== null;
             },
             canFinish(status) {
-                return status === 'ACTIVE';
+                return status === 'ACTIVE' || status === 'REJECTED';
             },
             canCommit(status) {
                 return status === 'WAIT_COMMIT';
@@ -331,7 +346,7 @@
             formatDocument(document) {
                 if (document) {
 
-                    return document.url === null ? '未生成' : document.url;
+                    return document.url === null ? '未生成' : '/api' + document.url;
                 } else {
                     return document;
                 }

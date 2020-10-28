@@ -6,35 +6,34 @@
         </el-card>
         <div class="table-container">
             <el-table ref="taskTable"
-                      :data="tasks"
+                      :data="delegates"
                       stripe
                       style="width: 100%"
                       v-loading="listLoading"
-                      @row-dblclick="handleInfo"
                       border>
                 <el-table-column label="ID" width="280" align="center">
-                    <template slot-scope="scope">{{ scope.row.id }}</template>
+                    <template slot-scope="scope">{{ scope.row.task.id }}</template>
                 </el-table-column>
                 <el-table-column label="任务名称" width="140" align="center">
-                    <template slot-scope="scope">{{ scope.row.name }}</template>
+                    <template slot-scope="scope">{{ scope.row.task.name }}</template>
                 </el-table-column>
                 <el-table-column label="任务类型" width="120" align="center">
-                    <template slot-scope="scope">{{ scope.row.type }}</template>
+                    <template slot-scope="scope">{{ scope.row.task.type }}</template>
                 </el-table-column>
                 <el-table-column label="负责员工" width="280" align="center">
-                    <template slot-scope="scope">{{ scope.row.undertaker | formatUndertaker }}</template>
+                    <template slot-scope="scope">{{ scope.row.delegateTo.name}}</template>
                 </el-table-column>
                 <el-table-column label="任务状态" width="120" align="center">
-                    <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
+                    <template slot-scope="scope">{{ scope.row.task.status | formatStatus }}</template>
                 </el-table-column>
                 <el-table-column label="所属项目" width="120" align="center">
-                    <template slot-scope="scope">{{ scope.row.project | formatProject }}</template>
+                    <template slot-scope="scope">{{ scope.row.task.project | formatProject }}</template>
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.pending)">{{ scope.row.pending |
+                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.task.pending)">{{ scope.row.pending |
                             formatDocument }}</a>
-                        <span v-else>{{ scope.row.pending | formatDocument }}</span>
+                        <span v-else>{{ scope.row.task.pending | formatDocument }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center">
@@ -143,7 +142,12 @@
                 return project.name;
             },
             formatDocument(document) {
-                return document.url === null ? '未提交' : document.url;
+                if (document) {
+
+                    return document.url === null ? '未提交' : document.url;
+                } else {
+                    return '未提交';
+                }
             },
         }
     }

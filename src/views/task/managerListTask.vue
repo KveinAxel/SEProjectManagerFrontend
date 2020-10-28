@@ -63,7 +63,7 @@
                             <el-button
                                 size="medium"
                                 type="primary"
-                                v-show="canReview(scope.status)"
+                                v-show="canReview(scope.row.status)"
                                 @click="handleReview(scope.$index, scope.row)">审核任务
                             </el-button>
                         </p>
@@ -237,7 +237,7 @@
                 }
             },
             handleReview(index, row) {
-                this.$confirm('该任务是否通过?\n任务进度：' + row.url, '任务审核', {
+                this.$confirm('该任务是否通过?', '任务审核', {
                     confirmButtonText: '通过',
                     cancelButtonText: '打回',
                     distinguishCancelAndClose: true,

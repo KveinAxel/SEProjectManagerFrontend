@@ -61,11 +61,10 @@ export function taskInfo(id) {
 }
 
 // 任务送审
-export function commitTask(id, params) {
+export function commitTask(id, docId) {
     return request({
-        url: '/task/' + id + '/commit',
+        url: '/task/' + id + '/commit?documentId=' + docId,
         method: 'post',
-        params: params
     })
 }
 

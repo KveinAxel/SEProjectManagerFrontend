@@ -171,7 +171,7 @@
         </el-card>
         <div class="table-container">
             <el-table ref="taskTable"
-                      :data="tasks"
+                      :data="taskList"
                       stripe
                       style="width: 100%"
                       v-loading="listLoading"
@@ -180,6 +180,11 @@
                 <el-table-column label="任务ID" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
                 </el-table-column>
+
+                <el-table-column label="前置任务" align="center">
+                    <template slot-scope="scope">{{ prevTask(scope.row.previousId) }}</template>
+                </el-table-column>
+
                 <el-table-column label="任务名称" align="center">
                     <template slot-scope="scope">{{ scope.row.name }}</template>
                 </el-table-column>
@@ -328,12 +333,23 @@
             }
         },
         methods: {
+            prevTask(arr) {
+                let map = {};
+                for (let item of this.taskList) {
+                    map[item.id] = item.name;
+                }
+                let s = '';
+                for (let item of arr) {
+                    s += (map[item] + '、');
+                }
+                s = s.substr(0, s.length - 1);
+                return s;
+            },
             handlePreviousIdConfirm() {
-                const task = this.task;
-                updateTask(task.id, this.previousIdSelected, task.name, task.type, task.undertaker.id, task.status, status.project.id).then(response => {
-                    if(response.status === 200) {
+                updateTask(this.task.id, this.previousIdSelected, this.task.name, this.task.type, this.task.undertaker.id, this.task.status, this.task.project.id).then(response => {
+                    if (response.status === 200) {
                         this.$message({
-                            type:'success',
+                            type: 'success',
                             message: '设置成功'
                         })
                     } else {

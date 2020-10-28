@@ -5,16 +5,19 @@
             <navbar></navbar>
             <app-main></app-main>
         </div>
+        <websocket></websocket>
     </div>
 </template>
 
 <script>
     import {Navbar, Sidebar, AppMain} from './components'
     import ResizeMixin from './mixin/ResizeHandler'
+    import Websocket from "../../websocket";
 
     export default {
         name: 'layout',
         components: {
+            Websocket,
             Navbar,
             Sidebar,
             AppMain
