@@ -165,29 +165,35 @@
             <span>任务依赖图</span>
         </el-card>
         <!--        <echarts v-bind="tasks"></echarts>-->
-<!--        <el-card style="margin-top: 30px" class="operate-container" shadow="never">-->
-<!--            <i class="el-icon-tickets"></i>-->
-<!--            <span>任务依赖表</span>-->
-<!--        </el-card>-->
-<!--        <div class="table-container">-->
-<!--            <el-table ref="taskTable"-->
-<!--                      :data="tasks"-->
-<!--                      stripe-->
-<!--                      style="width: 100%"-->
-<!--                      v-loading="listLoading"-->
-<!--                      border-->
-<!--            >-->
-<!--                <el-table-column label="前置任务ID" align="center">-->
-<!--                    <template slot-scope="scope">{{ scope.row.previousId }}</template>-->
-<!--                </el-table-column>-->
-<!--                <el-table-column label="任务ID" align="center">-->
-<!--                    <template slot-scope="scope">{{ scope.row.id }}</template>-->
-<!--                </el-table-column>-->
-<!--                <el-table-column label="任务名称" align="center">-->
-<!--                    <template slot-scope="scope">{{ scope.row.name }}</template>-->
-<!--                </el-table-column>-->
-<!--            </el-table>-->
-<!--        </div>-->
+        <el-card style="margin-top: 30px" class="operate-container" shadow="never">
+            <i class="el-icon-tickets"></i>
+            <span>任务依赖表</span>
+        </el-card>
+        <div class="table-container">
+            <el-table ref="taskTable"
+                      :data="tasks"
+                      stripe
+                      style="width: 100%"
+                      v-loading="listLoading"
+                      border
+            >
+                <el-table-column label="任务ID" align="center">
+                    <template slot-scope="scope">{{ scope.row.id }}</template>
+                </el-table-column>
+                <el-table-column label="任务名称" align="center">
+                    <template slot-scope="scope">{{ scope.row.name }}</template>
+                </el-table-column>
+                <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                        <el-button
+                            size="medium"
+                            type="primary"
+                            @click="handlePreviousId(scope.$index, scope.row)">修改前置
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
         <el-dialog
             :visible.sync="changeUndertakerDialogVisible"
             title="变更人员"
@@ -202,27 +208,43 @@
             <el-button type="primary" @click="handleChangeUndertakerConfirm">确 定</el-button>
         </span>
         </el-dialog>
+        <el-dialog
+            :visible.sync="previousIdDialogVisible"
+            title="修改前置任务"
+            width="40%">
+            <div>
+                <el-transfer filterable :filter-method="filterMethod" filter-placeholder="任务名"
+                             :titles="['任务清单', '前置任务']"
+                             v-model="previousIdSelected" :data="taskList"></el-transfer>
+            </div>
+            <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="previousIdDialogVisible=false">取 消</el-button>
+            <el-button type="primary" @click="handlePreviousIdConfirm">确 定</el-button>
+        </span>
+        </el-dialog>
+
     </div>
 </template>
 
 <script>
 
-    import {listTask} from "@/api/manager";
-    import store from "@/store"
     import Echarts from "./echarts";
     import {startProject, stopProject} from "@/api/project";
     import {listEmployee} from "@/api/employee";
-    import {projectInfo} from "../../api/project";
-    import {updateTask} from "../../api/task";
+    import {projectInfo} from "@/api/project";
+    import {updateTask} from "@/api/task";
 
     export default {
         name: "projectDetail",
         components: {Echarts},
         data() {
             return {
+                previousIdDialogVisible: false,
+                previousIdSelected: [],
                 changeUndertakerDialogVisible: false,
                 listLoading: false,
                 tasks: [],
+                task: {},
                 employees: [],
                 taskStatus: {
                     "CREATED": 0,
@@ -242,9 +264,7 @@
                     "status": "",         // 停止 - INACTIVE；正在进行 - ACTIVE
                     "doc": null
                 },
-                changeUndertakerRow: {
-
-                }
+                changeUndertakerRow: {}
             }
         },
         created() {
@@ -308,6 +328,24 @@
             }
         },
         methods: {
+            handlePreviousIdConfirm() {
+                const task = this.task;
+                updateTask(task.id, this.previousIdSelected, task.name, task.type, task.undertaker.id, task.status, status.project.id).then(response => {
+                    if(response.status === 200) {
+                        this.$message({
+                            type:'success',
+                            message: '设置成功'
+                        })
+                    } else {
+                        this.$message.error(response.message);
+                    }
+                })
+                this.previousIdDialogVisible = false;
+            },
+            handlePreviousId(index, row) {
+                this.previousIdDialogVisible = true;
+                this.task = row;
+            },
             filterMethod(query, item) {
                 return item.name.indexOf(query) > -1;
             },
@@ -396,16 +434,20 @@
                     if (response.status === 200) {
                         const data = response.data.tasks;
                         this.taskList = Object.assign(data);
+                        for (let item of this.taskList) {
+                            item.key = item.id;
+                            item.label = item.name;
+                        }
                         let cnt = 0;
-                        // for (const item of data) {
-                        //     cnt++;
-                        //     this.taskStatus[item.status]++;
-                        //     for (const deps of item.previousId) {
-                        //         let next = Object.assign(item);
-                        //         next.previousId = deps;
-                        //         this.tasks.push(next);
-                        //     }
-                        // }
+                        for (const item of data) {
+                            cnt++;
+                            this.taskStatus[item.status]++;
+                            // for (const deps of item.previousId) {
+                            //     let next = Object.assign(item);
+                            //     next.previousId = deps;
+                            //     this.tasks.push(next);
+                            // }
+                        }
                         for (let key in this.taskStatus) {
                             this.taskStatus[key] /= cnt / 100;
                             this.taskStatus[key] = parseFloat(this.taskStatus[key].toFixed(2));
@@ -416,7 +458,7 @@
                     }
                     const id = this.$route.query.id;
                     projectInfo(id).then(response => {
-                        if(response.status === 200) {
+                        if (response.status === 200) {
                             this.project = response.data.info;
                         } else {
                             this.$message.error(response.message);

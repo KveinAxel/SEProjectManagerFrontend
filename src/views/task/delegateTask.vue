@@ -32,7 +32,7 @@
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="scope.row.pending.url">{{ scope.row.pending |
+                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.pending)">{{ scope.row.pending |
                             formatDocument }}</a>
                         <span v-else>{{ scope.row.pending | formatDocument }}</span>
                     </template>
@@ -71,6 +71,14 @@
             this.getList();
         },
         methods: {
+            getUrl(doc) {
+                if (doc) {
+                    return doc.url;
+                } else {
+                    return doc;
+
+                }
+            },
             handleInfo(row, column, event) {
                 this.$router.push({path: '/task/taskDetail', query: {task: row}});
             },

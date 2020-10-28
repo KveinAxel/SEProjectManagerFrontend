@@ -166,8 +166,9 @@
                                     }
                                     // todo
                                     // this.loading = false;
-                                    this.$router.push({path: '/login'});
+
                                 });
+                            this.$router.push({path: '/login'});
                         } else {
                             this.$message('请确保两次密码相同!');
                         }

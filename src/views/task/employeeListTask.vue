@@ -176,6 +176,9 @@
                 commitingId: null,
                 addTaskDialogVisible: false,
                 delegateTaskDialogVisible: false,
+                task: {
+
+                }
             }
         },
         created() {
@@ -207,7 +210,7 @@
                     })
                 } else {
                     let t = this.hasDDL ? this.DDL : null;
-                    delegateTask(store.getters.eid, this.delegateSelected[0].id, t).then(response => {
+                    delegateTask(this.task.id, this.delegateSelected[0], t).then(response => {
                         if (response.status === 200) {
                             this.$message({
                                 type: 'success',
@@ -265,6 +268,7 @@
             },
             handleDelegate(index, row) {
                 this.delegateTaskDialogVisible = true;
+                this.task = row;
                 listEmployee().then(response => {
                     if (response.status !== 200) {
                         this.$message.error('获取员工名单失败');

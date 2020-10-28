@@ -40,15 +40,13 @@ export const constantRouterMap = [
                 path: 'managerProject',
                 name: 'managerProject',
                 component: () => import('@/views/project/managerListProject'),
-                meta: {title: '项目列表', icon: 'tree'},
-                hidden: store.getters.roles.indexOf('ROLE_MANAGER') === -1,
+                meta: {title: 'M项目列表', icon: 'tree'},
             },
             {
                 path: 'employeeProject',
                 name: 'employeeProject',
                 component: () => import('@/views/project/employeeListProject'),
-                meta: {title: '项目列表', icon: 'tree'},
-                hidden: store.getters.roles.indexOf('ROLE_EMPLOYEE') === -1,
+                meta: {title: 'E项目列表', icon: 'tree'},
             },
 
             {
@@ -85,15 +83,13 @@ export const constantRouterMap = [
                 path: 'managerTask',
                 name: 'managerTask',
                 component: () => import('@/views/task/managerListTask'),
-                meta: {title: '任务列表', icon: 'marker'},
-                hidden: store.getters.roles.indexOf('ROLE_MANAGER') === -1,
+                meta: {title: 'M任务列表', icon: 'marker'},
             },
             {
                 path: 'employeeTask',
                 name: 'employeeTask',
                 component: () => import('@/views/task/employeeListTask'),
-                meta: {title: '任务列表', icon: 'marker'},
-                hidden: store.getters.roles.indexOf('ROLE_EMPLOYEE') === -1,
+                meta: {title: 'E任务列表', icon: 'marker'},
             },
         ]
     },
@@ -103,7 +99,6 @@ export const constantRouterMap = [
         redirect: '/delegate/delegateTask',
         name: 'delegate',
         meta: {title: '任务'},
-        hidden: store.getters.roles.indexOf("ROLE_EMPLOYEE") === -1,
         children: [
             {
                 path: 'task',
@@ -130,15 +125,13 @@ export const constantRouterMap = [
                 path: 'managerUser',
                 name: 'managerUser',
                 component: () => import('@/views/user/managerUser'),
-                meta: {title: '个人中心', icon: 'user'},
-                hidden: store.getters.roles.indexOf('ROLE_MANAGER') === -1,
+                meta: {title: '经理中心', icon: 'user'},
             },
             {
                 path: 'employeeUser',
                 name: 'employeeUser',
                 component: () => import('@/views/user/employeeUser'),
-                meta: {title: '个人中心', icon: 'user'},
-                hidden: store.getters.roles.indexOf('ROLE_EMPLOYEE') === -1,
+                meta: {title: '员工中心', icon: 'user'},
             },
         ]
     },
@@ -153,21 +146,18 @@ export const constantRouterMap = [
                 name: 'manageUser',
                 component: () => import('@/views/manage/userManage'),
                 meta: {title: '用户管理', icon: 'user'},
-                hidden: store.getters.roles.indexOf('ROLE_ADMIN') === -1,
             },
             {
                 path: 'manageEmployee',
                 name: 'manageEmployee',
                 component: () => import('@/views/manage/employeeManage'),
                 meta: {title: '员工管理', icon: 'user'},
-                hidden: store.getters.roles.indexOf('ROLE_ADMIN') === -1,
             },
             {
                 path: 'manageManager',
                 name: 'manageManager',
                 component: () => import('@/views/manage/managerManage'),
                 meta: {title: '经理管理', icon: 'user'},
-                hidden: store.getters.roles.indexOf('ROLE_ADMIN') === -1,
             },
 
 

@@ -25,7 +25,7 @@
                 </el-table-column>
                 <el-table-column label="项目文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="scope.row.doc.url">{{ scope.row.doc | formatDocument
+                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.doc)">{{ scope.row.doc | formatDocument
                             }}</a>
                         <span v-else>未生成</span>
                     </template>
@@ -265,6 +265,13 @@
             }
         },
         methods: {
+            getUrl(doc) {
+                if (doc) {
+                    return doc.url;
+                }  else {
+                    return doc;
+                }
+            },
             filterMethod(query, item) {
                 return item.name.indexOf(query) > -1;
             },
