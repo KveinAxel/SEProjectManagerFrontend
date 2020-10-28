@@ -9,11 +9,9 @@
         name: "index",
         created() {
             const role_name = store.getters.roles[0];
-            console.log(role_name);
             if (role_name === 'ROLE_MANAGER') {
                 store.dispatch("ManagerInfo").then(() => {
                     this.$router.push({path: '/user/managerUser'})
-
                 })
             } else if (role_name === 'ROLE_EMPLOYEE') {
                 store.dispatch("EmployeeInfo").then(() => {

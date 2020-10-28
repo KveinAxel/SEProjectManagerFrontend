@@ -23,7 +23,7 @@ export function updateTask(id, previousIds, name, type, undertakerEid, status, p
             'type': type,
             'undertakerEid': undertakerEid,
             'status': status,
-            'projectId': project,
+            'projectId': projectId,
         }
     })
 }

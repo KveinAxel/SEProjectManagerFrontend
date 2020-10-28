@@ -43,7 +43,7 @@
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
                         <a v-if="scope.row.doc !== null"
-                           :href="scope.row.pending.url">
+                           :href="getUrl(scope.row.pending)">
                             {{ scope.row.pending | formatDocument }}
                         </a>
                         <span v-else>{{ scope.row.pending | formatDocument }}</span>
@@ -187,6 +187,14 @@
             this.getList();
         },
         methods: {
+            getUrl(doc) {
+                if (doc) {
+                    return doc.url;
+                } else {
+                    return doc;
+
+                }
+            },
             handleAddTask() {
                 this.addTaskDialogVisible = true;
             },
@@ -331,7 +339,12 @@
                 return editing ? '完成编辑' : '编辑任务';
             },
             formatDocument(document) {
-                return document.url === null ? '未提交' : document.url;
+                if (document) {
+
+                    return document.url === null ? '未提交' : document.url;
+                } else {
+                    return document;
+                }
             },
         }
     }

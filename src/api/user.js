@@ -11,6 +11,20 @@ export function updateUser(id, username) {
     })
 }
 
+// 更新密码
+export function updatePassword(id, username, password) {
+    return request({
+        url: '/user/' + id + '/update',
+        method: 'post',
+        data: {
+            'username': username,
+            'password': password
+        }
+    })
+}
+
+
+
 // 显示用户列表
 export function listUser() {
     return request({
@@ -26,3 +40,13 @@ export function userInfo() {
         method: 'get',
     })
 }
+
+// 显示用户列表
+export function deleteUser(id) {
+    return request({
+        url: '/user/' + id,
+        method: 'delete',
+    })
+}
+
+

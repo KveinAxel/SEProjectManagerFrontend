@@ -56,10 +56,10 @@
 
     import store from "@/store";
     import {withdrawTask} from "@/api/task";
-    import {listDelegate} from "../../api/employee";
+    import {listDelegate} from "@/api/employee";
 
     export default {
-        name: 'employeeListTasksView',
+        name: 'delegateTask',
         data() {
             return {
                 listLoading: true,

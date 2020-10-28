@@ -23,19 +23,20 @@
                 <el-table-column label="ID" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
                 </el-table-column>
-                <el-table-column label="项目名称" width="120" align="center">
+                <el-table-column label="项目名称" align="center">
                     <template slot-scope="scope">{{ scope.row.name }}</template>
                 </el-table-column>
-                <el-table-column label="负责经理" width="120" align="center">
+                <el-table-column label="负责经理" align="center">
                     <template slot-scope="scope">{{ scope.row.undertaker | formatUndertaker }}</template>
                 </el-table-column>
-                <el-table-column label="项目状态" width="120" align="center">
+                <el-table-column label="项目状态" align="center">
                     <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
                 </el-table-column>
-                <el-table-column label="项目文档" width="120" align="center">
+                <el-table-column label="项目文档" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="scope.row.doc.url">{{ scope.row.doc | formatDocument }}</a>
-                        <span v-else>{{ scope.row.doc | formatDocument }}</span>
+                        <a v-if="scope.row.doc !== null" :href="scope.row.doc.url">{{ scope.row.doc | formatDocument
+                            }}</a>
+                        <span v-else>未生成</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center">
@@ -72,6 +73,10 @@
                      ref="genProjectForm"
                      style="margin: auto 20px"
                      label-position="left">
+
+                <el-form-item label="项目名称" prop="name">
+                    <el-input name="name" v-model="genProjectForm.name"></el-input>
+                </el-form-item>
                 <el-form-item label="生成任务总数" prop="total">
                     <el-input-number name="totalCount" v-model="genProjectForm.total"></el-input-number>
                 </el-form-item>
@@ -82,7 +87,8 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="数量" prop="aCount">
-                    <el-input-number v-model="genProjectForm.taskCounts.A" :disabled="genProjectForm.aType"></el-input-number>
+                    <el-input-number v-model="genProjectForm.A"
+                                     :disabled="genProjectForm.aType === 'true' "></el-input-number>
                 </el-form-item>
                 <el-form-item label="B" prop="B">
                     <el-radio-group v-model="genProjectForm.bType">
@@ -91,7 +97,8 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="数量" prop="bCount">
-                    <el-input-number v-model="genProjectForm.taskCounts.B" :disabled="genProjectForm.bType"></el-input-number>
+                    <el-input-number v-model="genProjectForm.B"
+                                     :disabled="genProjectForm.bType === 'true' "></el-input-number>
                 </el-form-item>
                 <el-form-item label="C" prop="C">
                     <el-radio-group v-model="genProjectForm.cType">
@@ -100,7 +107,8 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="数量" prop="cCount">
-                    <el-input-number v-model="genProjectForm.taskCounts.C" :disabled="genProjectForm.cType"></el-input-number>
+                    <el-input-number v-model="genProjectForm.C"
+                                     :disabled="genProjectForm.cType === 'true'"></el-input-number>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -113,138 +121,147 @@
 
 <script>
 
-import {generateProject, startProject, stopProject, listProject} from "@/api/project";
-import store from '@/store'
+    import {generateProject, startProject, stopProject, listProject} from "@/api/project";
 
-export default {
-    name: 'managerListProjectView',
-    created() {
-        this.getList();
-    },
-    data() {
-        return {
-            listLoading: true,
-            projects: [],
-            genProjectForm: {
-                total: 20,
-                'taskCounts': {
+    export default {
+        name: 'managerListProjectView',
+        created() {
+            this.getList();
+        },
+        data() {
+            return {
+                generateProjectDialogVisible: false,
+                listLoading: true,
+                projects: [],
+                genProjectForm: {
+                    total: 20,
                     'A': 20,
-                    aType: false,
+                    aType: 'false',
                     'B': null,
-                    bType: true,
+                    bType: 'true',
                     'C': null,
-                    cType: true,
-                }
-            },
-            defaultGenProjectForm: {
-                total: 20,
-                'taskCounts': {
+                    cType: 'true',
+                },
+                defaultGenProjectForm: {
+                    total: 20,
                     'A': 20,
-                    aType: false,
+                    aType: 'false',
                     'B': null,
-                    bType: true,
+                    bType: 'true',
                     'C': null,
-                    cType: true,
-                }
-            },
+                    cType: 'true',
+                },
 
-        }
-    },
-    methods: {
-        handleGenProjectConfirm() {
-            this.$confirm('是否确定生成项目', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                let A = this.genProjectForm.taskCounts.aType ? null : this.genProjectForm.taskCounts.A;
-                let B = this.genProjectForm.taskCounts.bType ? null : this.genProjectForm.taskCounts.B;
-                let C = this.genProjectForm.taskCounts.cType ? null : this.genProjectForm.taskCounts.C;
-                generateProject(this.genProjectForm.total, A, B, C).then(response => {
-                    if (response.status !== 200) {
+            }
+        },
+        methods: {
+            handleGenProjectConfirm() {
+                this.$confirm('是否确定生成项目', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let A = this.genProjectForm.aType === 'true' ? null : this.genProjectForm.A;
+                    let B = this.genProjectForm.bType === 'true' ? null : this.genProjectForm.B;
+                    let C = this.genProjectForm.cType === 'true' ? null : this.genProjectForm.C;
+                    generateProject(this.genProjectForm.name, this.genProjectForm.total, A, B, C).then(response => {
+                        if (response.status !== 200) {
+                            this.$message.error(response.message);
+                        } else {
+                            this.$message({
+                                type: 'success',
+                                message: '生成成功'
+                            })
+                        }
+                    });
+                });
+                this.generateProjectDialogVisible = false;
+            },
+            getList() {
+                this.listLoading = true;
+                listProject().then(response => {
+                    if (response.status === 200) {
+                        this.projects = response.data;
+                    } else {
                         this.$message.error(response.message);
                     }
-                });
-            });
-            this.generateProjectDialogVisible = false;
+                })
+                this.listLoading = false;
+            },
+            handleAddProject() {
+                this.generateProjectDialogVisible = true;
+            },
+            handleStartProject(index, row) {
+                this.$confirm('是否要开始项目', '提示', {
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    type: 'warning'
+                }).then(() => {
+                    startProject(row.id).then(response => {
+                        const message = response.status === 200 ? '操作成功' : response.message;
+                        const type = response.status === 200 ? 'success' : 'warning';
+                        this.$message({
+                            message: message,
+                            type: type
+                        });
+                    })
+                })
+            },
+            handleStopProject(index, row) {
+                this.$confirm('是否要暂停项目', '提示', {
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    type: 'warning'
+                }).then(() => {
+                    stopProject(row.id).then(response => {
+                        const message = response.status === 200 ? '操作成功' : response.message;
+                        const type = response.status === 200 ? 'success' : 'warning';
+                        this.$message({
+                            message: message,
+                            type: type
+                        });
+                    })
+                })
+            },
+            handleProjectInfo(index, row) {
+                this.$router.push({path: '/project/managerDetail', query: {id: row.id}});
+            },
+            isStart(status) {
+                return status === "ACTIVE";
+            },
+            isStop(status) {
+                return status === "INACTIVE";
+            },
         },
-        getList() {
-            this.listLoading = true;
-            listProject().then(response => {
-                if (response.status === 200) {
-                    this.projects = response.data;
+        filters: {
+            formatStatus(status) {
+                if (status === 'ACTIVE') {
+                    return '运行中';
+                } else if (status === 'INACTIVE') {
+                    return '已暂停';
+                } else if (status === 'DONE') {
+                    return '已完成';
                 } else {
-                    this.$message.error(response.message);
+                    return '不明';
                 }
-            })
-            this.listLoading = false;
-        },
-        handleAddProject() {
-            this.generateProjectDialogVisible = true;
-        },
-        handleStartProject(index, row) {
-            this.$confirm('是否要开始项目', '提示', {
-                confirmButtonText: '是',
-                cancelButtonText: '否',
-                type: 'warning'
-            }).then(() => {
-                startProject(row.id).then(response => {
-                    const message = response.status === 200 ? '操作成功' : response.message;
-                    const type = response.status === 200 ? 'success' : 'warning';
-                    this.$message({
-                        message: message,
-                        type: type
-                    });
-                })
-            })
-        },
-        handleStopProject(index, row) {
-            this.$confirm('是否要暂停项目', '提示', {
-                confirmButtonText: '是',
-                cancelButtonText: '否',
-                type: 'warning'
-            }).then(() => {
-                stopProject(row.id).then(response => {
-                    const message = response.status === 200 ? '操作成功' : response.message;
-                    const type = response.status === 200 ? 'success' : 'warning';
-                    this.$message({
-                        message: message,
-                        type: type
-                    });
-                })
-            })
-        },
-        handleProjectInfo(index, row) {
-            this.$router.push({path: '/project/detail', query: {id: row.id}});
-        },
-        isStart(status) {
-            return status === "ACTIVE";
-        },
-        isStop(status) {
-            return status === "INACTIVE";
-        },
-    },
-    filters: {
-        formatStatus(status) {
-            return status === "ACTIVE" ? "运行中" : "已暂停";
-        },
-        formatUndertaker(undertaker) {
-            return undertaker.name;
-        },
-        formatProject(project) {
-            return project.name;
-        },
-        formatDocument(document) {
-            return document.url === null ? '未提交' : document.url;
+            },
+            formatUndertaker(undertaker) {
+                return undertaker.name;
+            },
+            formatProject(project) {
+                return project.name;
+            },
+            formatDocument(document) {
+                return document.url === null ? '未生成' : document.url;
+            }
         }
     }
-}
 </script>
 
 <style scoped>
-.app-container {
-    margin-top: 30px;
-    margin-left: 100px;
-    margin-right: 100px;
-}
+    .app-container {
+        margin-top: 30px;
+        margin-left: 100px;
+        margin-right: 100px;
+    }
 </style>

@@ -5,6 +5,7 @@
             action="/api/resource/image"
             :multiple="false" :show-file-list="showFileList"
             :file-list="fileList"
+            :headers="head"
             :on-remove="handleRemove"
             :on-preview="handlePreview"
             :on-success="handleUploadSuccess"
@@ -19,10 +20,12 @@
 </template>
 <script>
 
+import {getToken} from "@/utils/auth";
+
 export default {
     name: 'picUpload',
     props: {
-        value: String
+        value: Object
     },
     computed: {
         imageUrl() {
@@ -51,7 +54,10 @@ export default {
     },
     data() {
         return {
-            dialogVisible: false
+            dialogVisible: false,
+            head: {
+                'Authorization': getToken()
+            }
         };
     },
     methods: {
@@ -65,6 +71,8 @@ export default {
             this.dialogVisible = true;
         },
         handleUploadSuccess(res, file) {
+            this.value = res.data;
+            window.resourceObject = res.data;
             this.showFileList = true;
             this.fileList.pop();
             this.fileList.push({name: file.name, url: this.dataObj.host + '/' + this.dataObj.dir + '/' + file.name});

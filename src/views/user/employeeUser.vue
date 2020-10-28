@@ -1,30 +1,36 @@
 <template>
-    <el-card class="form-container" shadow="never">
-        <el-form :model="userForm" :rules="rules" ref="userForm" label-width="150px">
-            <el-form-item label="姓名："   prop="nickName">
-                <el-input v-model="userForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="用户名：" prop="userName">
-                <el-input v-model="userForm.username"></el-input>
-            </el-form-item>
-            <el-form-item label="角色：" prop="userName">
-                <template slot-scope="scope">{{userForm.roles | formatRoles}}</template>
-            </el-form-item>
-            <el-form-item label="头像：" prop="icon">
-                <pic-upload v-model="userForm.avatar.url"></pic-upload>
-            </el-form-item>
-            <el-form-item label="工作类型" required>
-                <el-radio-group v-model="userForm.type">
-                    <el-radio label="A"></el-radio>
-                    <el-radio label="B"></el-radio>
-                    <el-radio label="C"></el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="onSubmit('userForm')">提交</el-button>
-            </el-form-item>
-        </el-form>
-    </el-card>
+    <div>
+        <el-card class="operate-container" shadow="never">
+            <i class="el-icon-tickets"></i>
+            <span>员工列表</span>
+        </el-card>
+        <el-card class="form-container" shadow="never">
+            <el-form :model="userForm" :rules="rules" ref="userForm" label-width="150px">
+                <el-form-item label="姓名：" prop="name">
+                    <el-input v-model="userForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="用户名：" prop="userName">
+                    <el-input v-model="userForm.username"></el-input>
+                </el-form-item>
+                <el-form-item label="角色：" prop="userName">
+                    <template slot-scope="scope">{{userForm.roles | formatRoles}}</template>
+                </el-form-item>
+                <el-form-item label="头像：" prop="icon">
+                    <pic-upload v-model="userForm.avatar.url"></pic-upload>
+                </el-form-item>
+                <el-form-item label="工作类型" required>
+                    <el-radio-group v-model="userForm.type">
+                        <el-radio label="A"></el-radio>
+                        <el-radio label="B"></el-radio>
+                        <el-radio label="C"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit('userForm')">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+    </div>
 </template>
 
 <script>
@@ -33,12 +39,14 @@
     import PicUpload from "@/components/Upload/picUpload";
     import {updateUser} from "@/api/user";
     import store from "@/store";
+    import {listUser} from "@/api/user";
+    import {addEmployee} from "../../api/employee";
 
     const defaultUserForm = {
-        name:'',
-        username:'',
-        roles:[],
-        avatar:'',
+        name: '',
+        username: '',
+        roles: [],
+        avatar: '',
         type: ''
     };
     export default {
@@ -52,14 +60,15 @@
                     callback()
                 }
             };
+
             return {
-                userForm:Object.assign({},defaultUserForm),
+                userForm: Object.assign({}, defaultUserForm),
                 rules: {
                     username: [{required: true, trigger: 'blur', validator: validateUsername}],
                     avatar: [
                         {required: true, message: '请上传用户头像logo', trigger: 'blur'}
                     ],
-                }
+                },
             }
         },
         created() {
@@ -106,7 +115,7 @@
                         this.$message({
                             message: '验证失败',
                             type: 'error',
-                            duration:1000
+                            duration: 1000
                         });
                         return false;
                     }

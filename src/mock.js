@@ -17,7 +17,7 @@ const mockUser = {
 
 
 const mockManager = {
-    "id": "ff808081755a9f3101755ab92ce00001",
+    "id": "5cd1e0c54d5b4b9391f93578e2ecd98a",
     "name": "manager",
     "user": mockUser
 };
@@ -84,6 +84,55 @@ const mockTask3 = {
     "delegate": false,
 
 }
+const mockTask4 = {
+    "id": "796d1f4216a511ebadc10242ac120002",
+    "previousId": ["ff808081755a9f3101755ab92ce00001", "5818852a16a511ebadc10242ac120002"],
+    "name": "TaskC",
+    "type": "C",
+    "undertaker": null, // 任务负责人
+    "status": "WAIT_REVIEW",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
+    "project": mockProject,
+    "pending": mockResource,
+    "delegate": false,
+
+}
+const mockTask5 = {
+    "id": "796d1f4216a511ebadc10242ac120002",
+    "previousId": ["ff808081755a9f3101755ab92ce00001", "5818852a16a511ebadc10242ac120002"],
+    "name": "TaskC",
+    "type": "C",
+    "undertaker": null, // 任务负责人
+    "status": "DONE",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
+    "project": mockProject,
+    "pending": mockResource,
+    "delegate": false,
+
+}
+const mockTask6 = {
+    "id": "796d1f4216a511ebadc10242ac120002",
+    "previousId": ["ff808081755a9f3101755ab92ce00001", "5818852a16a511ebadc10242ac120002"],
+    "name": "TaskC",
+    "type": "C",
+    "undertaker": null, // 任务负责人
+    "status": "REJECTED",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
+    "project": mockProject,
+    "pending": mockResource,
+    "delegate": false,
+
+}
+const mockTask7 = {
+    "id": "796d1f4216a511ebadc10242ac120002",
+    "previousId": ["ff808081755a9f3101755ab92ce00001", "5818852a16a511ebadc10242ac120002"],
+    "name": "TaskC",
+    "type": "C",
+    "undertaker": null, // 任务负责人
+    "status": "INACTIVE",    // CREATED - 创建；ACTIVE - 执行中；WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回
+    "project": mockProject,
+    "pending": mockResource,
+    "delegate": false,
+
+}
+
 
 const mockDelegate = {
     "id": "123asd",
@@ -151,7 +200,7 @@ const mockManagerListTask = function () {
     return {
         "status": 200,
         "message": null,
-        "data": [mockTask1, mockTask2],
+        "data": [mockTask1, mockTask2, mockTask3, mockTask4, mockTask5, mockTask6, mockTask7],
     };
 };
 Mock.mock(/\/api\/manager\/.{32}\/task/, 'get', mockManagerListTask);

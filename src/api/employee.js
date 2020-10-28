@@ -56,3 +56,11 @@ export function employeeInfo() {
         method: 'get',
     })
 }
+
+// 删除员工
+export function deleteEmployee(id) {
+    return request({
+        url: '/employee/' + id,
+        method: 'delete',
+    })
+}

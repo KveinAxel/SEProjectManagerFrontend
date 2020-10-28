@@ -24,15 +24,20 @@
                 <el-table-column label="项目状态" width="120" align="center">
                     <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
                 </el-table-column>
+                <el-table-column label="项目文档" width="120" align="center">
+                    <template slot-scope="scope">
+                        <a v-if="scope.row.doc !== null" :href="scope.row.doc.url">{{ scope.row.doc | formatDocument
+                            }}</a>
+                        <span v-else>{{ scope.row.doc | formatDocument }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
-                        <p>
-                            <el-button
-                                size="medium"
-                                type="primary"
-                                @click="handleProjectInfo(scope.$index, scope.row)">查看
-                            </el-button>
-                        </p>
+                        <el-button
+                            size="medium"
+                            type="primary"
+                            @click="handleProjectInfo(scope.$index, scope.row)">查看
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -68,12 +73,20 @@
                 this.listLoading = false;
             },
             handleProjectInfo(index, row) {
-                this.$router.push({path: '/project/detail', query: {id: row.id}});
+                this.$router.push({path: '/project/employeeDetail', query: {id: row.id}});
             },
         },
         filters: {
             formatStatus(status) {
-                return status === "ACTIVE" ? "运行中" : "已暂停";
+                if (status === 'ACTIVE') {
+                    return '运行中';
+                } else if (status === 'INACTIVE') {
+                    return '已暂停';
+                } else if (status === 'DONE') {
+                    return '已完成';
+                } else {
+                    return '不明';
+                }
             },
             formatUndertaker(undertaker) {
                 return undertaker.name;
@@ -81,6 +94,9 @@
             formatProject(project) {
                 return project.name;
             },
+            formatDocument(document) {
+                return document.url === null ? '未提交' : document.url;
+            }
         }
     }
 </script>

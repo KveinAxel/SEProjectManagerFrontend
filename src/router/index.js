@@ -7,12 +7,11 @@ import Layout from '../views/layout/Layout'
 import store from "../store";
 
 
-
 export const constantRouterMap = [
-    { path: '/login',    component: () => import('@/views/login/index'),     hidden: true},
-    { path: '/register', component: () => import('@/views/login/register'),  hidden: true},
-    { path: '/404',      component: () => import('@/views/404'),             hidden: true},
-    { path: '/user',     component: () => import('@/views/user/index'),      hidden: true},
+    {path: '/login', component: () => import('@/views/login/index'), hidden: true},
+    {path: '/register', component: () => import('@/views/login/register'), hidden: true},
+    {path: '/404', component: () => import('@/views/404'), hidden: true},
+    {path: '/user', component: () => import('@/views/user/index'), hidden: true},
     {
         path: '',
         component: Layout,
@@ -27,85 +26,84 @@ export const constantRouterMap = [
     {
         path: '/project',
         component: Layout,
-        redirect: '/project/project',
+        // redirect: '/project/project',
         name: 'project',
         meta: {title: '项目', icon: 'project'},
         children: [
+            // {
+            //     path: 'project',
+            //     name: 'project',
+            //     component: () => import('@/views/project/index'),
+            //     meta: {title: '项目列表', icon: 'tree'}
+            // },
             {
-                path: 'project',
-                name: 'project',
-                component: () => import('@/views/project/index'),
-                meta: {title: '项目列表', icon: 'tree'}
-            },
-            {
-                path: 'manager',
-                name: 'manager',
+                path: 'managerProject',
+                name: 'managerProject',
                 component: () => import('@/views/project/managerListProject'),
                 meta: {title: '项目列表', icon: 'tree'},
-                hidden: true,
+                hidden: store.getters.roles.indexOf('ROLE_MANAGER') === -1,
             },
             {
-                path: 'employee',
-                name: 'employee',
+                path: 'employeeProject',
+                name: 'employeeProject',
                 component: () => import('@/views/project/employeeListProject'),
                 meta: {title: '项目列表', icon: 'tree'},
-                hidden: true,
+                hidden: store.getters.roles.indexOf('ROLE_EMPLOYEE') === -1,
             },
 
             {
-                path: 'detail',
-                name: 'detail',
-                component: () => import('@/views/project/projectDetail'),
+                path: 'employeeDetail',
+                name: 'employeeDetail',
+                component: () => import('@/views/project/employeeProjectDetail'),
+                meta: {title: '项目详情'},
+                hidden: true
+            },
+            {
+                path: 'managerDetail',
+                name: 'managerDetail',
+                component: () => import('@/views/project/managerProjectDetail'),
                 meta: {title: '项目详情'},
                 hidden: true
             }
+
         ]
     },
     {
         path: '/task',
         component: Layout,
-        redirect: '/task/listTask',
+        // redirect: '/task/listTask',
         name: 'task',
         meta: {title: '任务'},
         children: [
+            // {
+            //     path: 'listTask',
+            //     name: 'listTask',
+            //     component: () => import('@/views/task/index'),
+            //     meta: {title: '任务列表', icon: 'marker'},
+            // },
             {
-                path: 'listTask',
-                name: 'listTask',
-                component: () => import('@/views/task/index'),
-                meta: {title: '任务列表', icon: 'marker'},
-            },
-            {
-                path: 'manager',
-                name: 'manager',
+                path: 'managerTask',
+                name: 'managerTask',
                 component: () => import('@/views/task/managerListTask'),
                 meta: {title: '任务列表', icon: 'marker'},
-                hidden: true
+                hidden: store.getters.roles.indexOf('ROLE_MANAGER') === -1,
             },
             {
-                path: 'employee',
-                name: 'employee',
+                path: 'employeeTask',
+                name: 'employeeTask',
                 component: () => import('@/views/task/employeeListTask'),
                 meta: {title: '任务列表', icon: 'marker'},
-                hidden: true
+                hidden: store.getters.roles.indexOf('ROLE_EMPLOYEE') === -1,
             },
-
-            {
-                path: 'taskDetail',
-                name: 'taskDetail',
-                component: () => import('@/views/task/taskDetail'),
-                meta: {title: '任务详情'},
-                hidden: true
-            },
-
         ]
     },
     {
         path: '/delegate',
         component: Layout,
-        redirect: '/delegate/task',
+        redirect: '/delegate/delegateTask',
         name: 'delegate',
         meta: {title: '任务'},
-        hidden: store.gmanaetters.roles.indexOf("ROLE_EMPLOYEE") === -1,
+        hidden: store.getters.roles.indexOf("ROLE_EMPLOYEE") === -1,
         children: [
             {
                 path: 'task',
@@ -118,30 +116,61 @@ export const constantRouterMap = [
     {
         path: '/user',
         component: Layout,
-        redirect: '/user/user',
+        // redirect: '/user/user',
         name: 'delegate',
         meta: {title: '用户'},
         children: [
-            {
-                path: 'user',
-                name: 'user',
-                component: () => import('@/views/user/index'),
-                meta: {title: '个人中心', icon: 'user'},
-            },
+            // {
+            //     path: 'user',
+            //     name: 'user',
+            //     component: () => import('@/views/user/index'),
+            //     meta: {title: '个人中心', icon: 'user'},
+            // },
             {
                 path: 'managerUser',
                 name: 'managerUser',
                 component: () => import('@/views/user/managerUser'),
                 meta: {title: '个人中心', icon: 'user'},
-                hidden: true
+                hidden: store.getters.roles.indexOf('ROLE_MANAGER') === -1,
             },
             {
                 path: 'employeeUser',
                 name: 'employeeUser',
                 component: () => import('@/views/user/employeeUser'),
                 meta: {title: '个人中心', icon: 'user'},
-                hidden: true
+                hidden: store.getters.roles.indexOf('ROLE_EMPLOYEE') === -1,
             },
+        ]
+    },
+    {
+        path: '/manage',
+        component: Layout,
+        name: 'delegate',
+        meta: {title: '管理', icon: 'user'},
+        children: [
+            {
+                path: 'manageUser',
+                name: 'manageUser',
+                component: () => import('@/views/manage/userManage'),
+                meta: {title: '用户管理', icon: 'user'},
+                hidden: store.getters.roles.indexOf('ROLE_ADMIN') === -1,
+            },
+            {
+                path: 'manageEmployee',
+                name: 'manageEmployee',
+                component: () => import('@/views/manage/employeeManage'),
+                meta: {title: '员工管理', icon: 'user'},
+                hidden: store.getters.roles.indexOf('ROLE_ADMIN') === -1,
+            },
+            {
+                path: 'manageManager',
+                name: 'manageManager',
+                component: () => import('@/views/manage/managerManage'),
+                meta: {title: '经理管理', icon: 'user'},
+                hidden: store.getters.roles.indexOf('ROLE_ADMIN') === -1,
+            },
+
+
         ]
     },
 

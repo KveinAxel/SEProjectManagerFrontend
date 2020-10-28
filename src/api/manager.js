@@ -77,5 +77,15 @@ export function listTask(id) {
     })
 }
 
+// 删除经理
+export function deleteManager(id) {
+    return request({
+        url: '/manager/' + id,
+        method: 'delete',
+    })
+}
+
+
+
 
 

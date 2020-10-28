@@ -25,13 +25,14 @@ export function stopProject(id) {
 }
 
 // 生成项目
-export function generateProject(total, A, B, C) {
+export function generateProject(name, total, A, B, C) {
     return request({
         url: '/project/generate',
         method: 'post',
         data: {
+            "name": name,
             "total": total,
-            "taskCount": {
+            "taskCounts": {
                 "A": A,
                 "B": B,
                 "C": C,

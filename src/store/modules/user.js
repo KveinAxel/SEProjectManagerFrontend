@@ -49,14 +49,30 @@ const user = {
             return new Promise((resolve, reject) => {
                 login(username, userInfo.password).then(response => {
                     const data = response.data;
-                    const tokenStr = JSON.stringify(data['authToken']);
+                    const tokenStr = data['authToken']['token'];
                     const roles = data['roles'];
                     commit('SET_NAME', data.username);
                     setToken(tokenStr);
                     commit('SET_TOKEN', tokenStr);
                     setRoles(roles);
                     commit('SET_ROLES', roles);
-                    resolve()
+                    if (roles.indexOf('ROLE_MANAGER') !== -1) {
+                        managerInfo().then(response => {
+                            const id = response.data.id;
+                            const name = response.data.name;
+                            setMid(id);
+                            commit("SET_MANAGER", id, name);
+                            resolve()
+                        })
+                    } else if (roles.indexOf('ROLE_EMPLOYEE') !== -1) {
+                        employeeInfo().then(response => {
+                            const id = response.data.id;
+                            const name = response.data.name;
+                            setEid(id);
+                            commit("SET_EMPLOYEE", id, name);
+                            resolve();
+                        })
+                    }
                 }).catch(error => {
                     reject(error)
                 })

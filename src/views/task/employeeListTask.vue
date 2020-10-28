@@ -31,7 +31,7 @@
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="scope.row.pending.url">{{ scope.row.pending |
+                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.pending)">{{ scope.row.pending |
                             formatDocument }}</a>
                         <span v-else>{{ scope.row.pending | formatDocument }}</span>
                     </template>
@@ -187,6 +187,13 @@
             },
         },
         methods: {
+            getUrl(doc) {
+                if(doc) {
+                    return doc.url;
+                } else {
+                    return doc;
+                }
+            },
             handleDelegateConfirm() {
                 if (this.delegateSelected.length > 1) {
                     this.$message({
@@ -308,7 +315,7 @@
                 } else if (status === 'INACTIVE') {
                     return '暂停';
                 } else {
-                    return '不明'
+                    return '不明';
                 }
             },
             formatUndertaker(undertaker) {
@@ -318,7 +325,12 @@
                 return project.name;
             },
             formatDocument(document) {
-                return document.url === null ? '未提交' : document.url;
+                if (document) {
+
+                    return document.url === null ? '未生成' : document.url;
+                } else {
+                    return document;
+                }
             },
         }
     }
