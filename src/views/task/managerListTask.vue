@@ -17,7 +17,6 @@
                       stripe
                       style="width: 100%"
                       v-loading="listLoading"
-                      @row-dblclick="handleInfo"
                       border>
                 <el-table-column label="ID" width="280" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
@@ -139,7 +138,7 @@
             <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="addTaskDialogVisible=false">取 消</el-button>
             <el-button type="primary" @click="handleAddTaskConfirm">确 定</el-button>
-        </span>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -190,9 +189,6 @@
         methods: {
             handleAddTask() {
                 this.addTaskDialogVisible = true;
-            },
-            handleInfo(row, column, event) {
-                this.$router.push({path: '/task/taskDetail', query: {task: row}});
             },
             handleEdit(index, row) {
                 if (row.editing) {

@@ -8,6 +8,14 @@ const mockUser = {
     "avatar": 'https://imgchr.com/i/BlykQS'
 }
 
+// const mockUser = {
+//     "id": "ff808081755a9f3101755ab92ce00001",
+//     "username": "user",
+//     "roles": ["ROLE_EMPLOYEE"],
+//     "avatar": 'https://imgchr.com/i/BlykQS'
+// }
+
+
 const mockManager = {
     "id": "ff808081755a9f3101755ab92ce00001",
     "name": "manager",

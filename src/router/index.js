@@ -38,8 +38,23 @@ export const constantRouterMap = [
                 meta: {title: '项目列表', icon: 'tree'}
             },
             {
-                path: 'projectDetail',
-                name: 'projectDetail',
+                path: 'manager',
+                name: 'manager',
+                component: () => import('@/views/project/managerListProject'),
+                meta: {title: '项目列表', icon: 'tree'},
+                hidden: true,
+            },
+            {
+                path: 'employee',
+                name: 'employee',
+                component: () => import('@/views/project/employeeListProject'),
+                meta: {title: '项目列表', icon: 'tree'},
+                hidden: true,
+            },
+
+            {
+                path: 'detail',
+                name: 'detail',
                 component: () => import('@/views/project/projectDetail'),
                 meta: {title: '项目详情'},
                 hidden: true
@@ -90,6 +105,7 @@ export const constantRouterMap = [
         redirect: '/delegate/task',
         name: 'delegate',
         meta: {title: '任务'},
+        hidden: store.gmanaetters.roles.indexOf("ROLE_EMPLOYEE") === -1,
         children: [
             {
                 path: 'task',

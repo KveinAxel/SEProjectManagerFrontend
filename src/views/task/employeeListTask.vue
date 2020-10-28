@@ -10,7 +10,6 @@
                       stripe
                       style="width: 100%"
                       v-loading="listLoading"
-                      @row-dblclick="handleInfo"
                       border>
                 <el-table-column label="ID" width="280" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
@@ -52,6 +51,7 @@
                                 v-if="!canDelegate(scope.delegate)"
                                 @click="handleWithdraw(scope.$index, scope.row)">收回任务
                             </el-button>
+                        </p><p>
                             <el-button
                                 size="medium"
                                 type="primary"
@@ -72,7 +72,7 @@
         <el-dialog title="提交任务文件"
                    :visible.sync="isUploading"
         >
-<!--            todo -->
+            <!--            todo -->
             <el-upload
                 drag
                 v-bind:action="commitingUrl"
@@ -82,6 +82,33 @@
                 <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
         </el-dialog>
+        <el-dialog title="委托任务" :visible.sync="delegateTaskDialogVisible">
+            <div><el-transfer filterable :filter-method="filterMethod" filter-placeholder="请输入姓名"
+                         :titles="['名单', '委托人']"
+                              v-model="delegateSelected" :data="employees"></el-transfer></div>
+            <div style="margin-top: 20px">
+                收回日期
+                <el-switch
+                    v-model="hasDDL"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949">
+                </el-switch>
+            </div>
+            <div class="block" style="margin-top: 20px" v-if="hasDDL">
+                <span class="demonstration">任务收回日期</span>
+                <el-date-picker
+                    v-model="DDL"
+                    type="datetime"
+                    placeholder="选择委托收回时间"
+                    align="right"
+                    :picker-options="pickerOptions">
+                </el-date-picker>
+            </div>
+            <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="delegateTaskDialogVisible=false">取 消</el-button>
+            <el-button type="primary" @click="handleDelegateConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -90,6 +117,8 @@
     import store from "@/store";
     import {withdrawTask} from "@/api/task";
     import {listTask} from "@/api/employee";
+    import {listEmployee} from "../../api/employee";
+    import {delegateTask} from "../../api/task";
 
     export default {
         name: 'employeeListTasksView',
@@ -102,6 +131,28 @@
                 }
             };
             return {
+                pickerOptions: {
+                    shortcuts: [
+                        {
+                            text: '明天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() + 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        }, {
+                            text: '一周后',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', date);
+                            }
+                        }]
+                },
+                DDL: new Date(),
+                employees: [],
+                hasDDL: false,
+                delegateSelected: [],
                 addTaskForm: {
                     "previousId": [],
                     "name": "",
@@ -124,6 +175,7 @@
                 isUploading: false,
                 commitingId: null,
                 addTaskDialogVisible: false,
+                delegateTaskDialogVisible: false,
             }
         },
         created() {
@@ -135,8 +187,38 @@
             },
         },
         methods: {
-            handleInfo(row, column, event) {
-                this.$router.push({path: '/task/taskDetail', query: {task: row}});
+            handleDelegateConfirm() {
+                if (this.delegateSelected.length > 1) {
+                    this.$message({
+                        type: 'warning',
+                        message: '只能选择一个委托人'
+                    })
+                } else if (this.delegateSelected.length < 1) {
+                    this.$message({
+                        type: 'warning',
+                        message: '请选择委托人'
+                    })
+                } else {
+                    let t = this.hasDDL ? this.DDL : null;
+                    delegateTask(store.getters.eid, this.delegateSelected[0].id, t).then(response => {
+                        if (response.status === 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '委托成功'
+                            })
+                        } else {
+                            this.$message.error(response.message);
+                        }
+                        this.hasDDL = false;
+                        this.DDL = new Date();
+                        this.delegateSelected = [];
+                        this.delegateTaskDialogVisible = false;
+                    })
+                }
+
+            },
+            filterMethod(query, item) {
+                return item.name.indexOf(query) > -1;
             },
             handleWithdraw(index, row) {
                 this.$confirm('是否要收回委托', '提示', {
@@ -175,19 +257,17 @@
                 this.commitingId = row.id;
             },
             handleDelegate(index, row) {
-                this.$confirm('是否要将该任务委托给他人', '提示', {
-                    confirmButtonText: '是',
-                    cancelButtonText: '否',
-                    type: 'warning'
-                }).then(() => {
-                    finishTask(row.id).then(response => {
-                        const message = response.status === 200 ? '操作成功' : response.message;
-                        const type = response.status === 200 ? 'success' : 'warning';
-                        this.$message({
-                            message: message,
-                            type: type
-                        });
-                    })
+                this.delegateTaskDialogVisible = true;
+                listEmployee().then(response => {
+                    if (response.status !== 200) {
+                        this.$message.error('获取员工名单失败');
+                    } else {
+                        this.employees = response.data;
+                        for (let item of this.employees) {
+                            item.key = item.id;
+                            item.label = item.name;
+                        }
+                    }
                 })
             },
             getList() {
