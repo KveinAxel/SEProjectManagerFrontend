@@ -8,20 +8,20 @@
             <el-row>
                 <el-col :span="1">暂停:</el-col>
                 <el-col :span="23">
-                    <el-progress :text-inside="true" :stroke-width="22" :percentage="20" status="warning"></el-progress>
+                    <el-progress :text-inside="true" :stroke-width="22" :percentage="project['INACTIVE']" status="warning"></el-progress>
                 </el-col>
             </el-row>
             <el-row style="margin-top: 15px">
                 <el-col :span="1">启动</el-col>
                 <el-col :span="23">
-                    <el-progress :text-inside="true" :stroke-width="24" :percentage="55"
+                    <el-progress :text-inside="true" :stroke-width="24" :percentage="project['ACTIVE']"
                                  status="success"></el-progress>
                 </el-col>
             </el-row>
             <el-row style="margin-top: 15px;">
                 <el-col :span="1">完成</el-col>
                 <el-col :span="23">
-                    <el-progress :text-inside="true" :stroke-width="26" :percentage="25"
+                    <el-progress :text-inside="true" :stroke-width="26" :percentage="project['DONE']"
                     ></el-progress>
                 </el-col>
             </el-row>
@@ -35,7 +35,7 @@
             <el-row style="text-align: center" type="flex" justify="center">
                 <el-col :span="3">
                     <el-row style="text-align: center">
-                        <el-progress type="circle" :percentage="5"></el-progress>
+                        <el-progress type="circle" :percentage="task['CREATED']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         创建
@@ -43,7 +43,7 @@
                 </el-col>
                 <el-col :span="3">
                     <el-row style="text-align: center">
-                        <el-progress type="circle" :percentage="50"></el-progress>
+                        <el-progress type="circle" :percentage="task['ACTIVE']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         运行
@@ -51,7 +51,7 @@
                 </el-col>
                 <el-col :span="3">
                     <el-row style="text-align: center">
-                        <el-progress type="circle" status="warning" :percentage="10"></el-progress>
+                        <el-progress type="circle" status="warning" :percentage="task['INACTIVE']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         暂停
@@ -59,7 +59,7 @@
                 </el-col>
                 <el-col :span="3">
                     <el-row style="text-align: center">
-                        <el-progress type="circle" :percentage="5"></el-progress>
+                        <el-progress type="circle" :percentage="task['WAIT_COMMIT']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         等待结果
@@ -67,7 +67,7 @@
                 </el-col>
                 <el-col :span="3">
                     <el-row style="text-align: center">
-                        <el-progress type="circle" :percentage="10"></el-progress>
+                        <el-progress type="circle" :percentage="task['WAIT_REVIEW']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         等待审核
@@ -75,7 +75,7 @@
                 </el-col>
                 <el-col :span="3">
                     <el-row style="text-align: center">
-                        <el-progress type="circle" status="success" :percentage="8"></el-progress>
+                        <el-progress type="circle" status="success" :percentage="task['DONE']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         完成
@@ -84,7 +84,7 @@
                 <el-col :span="3">
                     <el-row style="text-align: center">
                         <el-progress type="circle" status="exception"
-                                     :percentage="2"></el-progress>
+                                     :percentage="task['REJECTED']"></el-progress>
                     </el-row>
                     <el-row style="text-align: center">
                         被打回
@@ -97,10 +97,34 @@
 
 <script>
     import store from '@/store'
+    import {taskStat} from "../../api/task";
 
     export default {
         name: "index",
+        data() {
+            return {
+                task: {},
+                project: {}
+            }
+        },
         created() {
+            taskStat().then(response => {
+                if (response.status === 200) {
+                    this.task = response.data.task;
+                    this.project = response.data.project;
+                    for (let key in this.task) {
+                        this.task[key] = this.task[key] * 100;
+                        this.task[key] = parseFloat(this.task[key].toFixed(2));
+                    }
+                    for (let key in this.project) {
+                        this.project[key] *= 100;
+                        this.project[key] = parseFloat(this.project[key].toFixed(2));
+                    }
+
+                } else {
+                    this.$message.error(response.message);
+                }
+            })
         }
     }
 </script>

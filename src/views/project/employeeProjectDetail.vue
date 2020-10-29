@@ -276,7 +276,7 @@
             },
             formatDocument(document) {
                 if (document) {
-                    return document.url === null ? '未生成' : '/api' + document.url;
+                    return document.url === null ? '未生成' : '' + document.url;
                 } else {
                     return '未生成'
                 }
@@ -301,7 +301,7 @@
             },
             getUrl(doc) {
                 if (doc) {
-                    return doc.url;
+                    return '' +  doc.url;
                 } else {
                     return doc;
                 }

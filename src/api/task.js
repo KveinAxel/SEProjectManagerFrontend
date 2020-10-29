@@ -99,3 +99,12 @@ export function withdrawTask(id) {
         method: 'post',
     })
 }
+
+// 统计数据
+export function taskStat() {
+    return request({
+        url: '/task/stat',
+        method: 'get',
+    })
+}
+

@@ -37,7 +37,10 @@
                     taskMap[item.id] = item.name;
                 }
                 for (let item of this.tasks) {
-                    edges.push({source: taskMap[item.previousId], target: item.name});
+                    for (let prev of item.previousId) {
+
+                        edges.push({source: taskMap[prev], target: item.name});
+                    }
                 }
 
                 let mc = this.$refs.chart;
@@ -47,7 +50,7 @@
                         text: ''
                     },
                     tooltip: {},
-                    animationDurationUpdate: 1000,
+                    animationDurationUpdate: 2000,
                     animationEasingUpdate: 'quinticInOut',
                     series: [
                         {
@@ -75,7 +78,7 @@
                             center: [600, 200],
                             force: {
                                 repulsion: 1000,
-                                gravity: 0.1
+                                gravity: 0.2
                             },
                             // focusNodeAdjacency: true,
 

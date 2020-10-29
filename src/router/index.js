@@ -92,8 +92,8 @@ export let constantRouterMap = [
         meta: {title: '用户', icon: 'user'},
         children: [
             {
-                path: 'user',
-                name: 'user',
+                path: 'userCenter',
+                name: 'userCenter',
                 component: () => import('@/views/user/index'),
                 meta: {title: '个人中心', icon: 'marker', roles: "ROLE_ADMIN"},
             },

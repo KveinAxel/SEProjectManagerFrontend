@@ -75,8 +75,8 @@ const user = {
                             setMid(id);
                             commit("SET_MANAGER", id, name);
                             if (response.data.user.avatar) {
-                                commit('SET_AVATAR', '/api' + response.data.user.avatar.url);
-                                setAvatar('/api' + response.data.user.avatar.url);
+                                commit('SET_AVATAR', '' + response.data.user.avatar.url);
+                                setAvatar('' + response.data.user.avatar.url);
                             } else {
                                 let defualt_url = null;
                                 commit('SET_AVATAR', defualt_url);
@@ -92,8 +92,8 @@ const user = {
                             setEid(id);
                             commit("SET_EMPLOYEE", id, name);
                             if (response.data.user.avatar) {
-                                commit('SET_AVATAR', '/api' + response.data.user.avatar.url);
-                                setAvatar('/api' + response.data.user.avatar.url);
+                                commit('SET_AVATAR', '' + response.data.user.avatar.url);
+                                setAvatar('' + response.data.user.avatar.url);
                             } else {
                                 let defualt_url = null;
                                 commit('SET_AVATAR', defualt_url);
@@ -104,8 +104,8 @@ const user = {
                     } else if (roles.includes('ROLE_ADMIN') ) {
                         userInfoAPI().then(response => {
                             if (response.data.avatar) {
-                                commit('SET_AVATAR', '/api' + response.data.avatar.url);
-                                setAvatar('/api' + response.data.avatar.url);
+                                commit('SET_AVATAR', '' + response.data.avatar.url);
+                                setAvatar('' + response.data.avatar.url);
                             } else {
                                 let defualt_url = null;
                                 commit('SET_AVATAR', defualt_url);

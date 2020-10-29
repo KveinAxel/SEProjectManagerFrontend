@@ -71,7 +71,7 @@
         methods: {
             getUrl(doc) {
                 if (doc) {
-                    return doc.url;
+                    return '' +  doc.url;
                 } else {
                     return doc;
 
@@ -143,7 +143,7 @@
             formatDocument(document) {
                 if (document) {
 
-                    return document.url === null ? '未提交' : '/api' + document.url;
+                    return document.url === null ? '未提交' : '' + document.url;
                 } else {
                     return '未提交';
                 }

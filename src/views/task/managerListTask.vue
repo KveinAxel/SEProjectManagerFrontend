@@ -27,16 +27,16 @@
                         <el-input v-else v-model="scope.row.name" placeholder="请输入任务名"></el-input>
                     </template>
                 </el-table-column>
-                <el-table-column label="任务类型" width="120" align="center">
+                <el-table-column label="任务类型" width="120" align="center" sortable>
                     <template slot-scope="scope">{{ scope.row.type }}</template>
                 </el-table-column>
-                <el-table-column label="负责员工" width="280" align="center">
+                <el-table-column label="负责员工" width="280" align="center" sortable>
                     <template slot-scope="scope">{{ scope.row.undertaker | formatUndertaker }}</template>
                 </el-table-column>
-                <el-table-column label="任务状态" width="120" align="center">
+                <el-table-column label="任务状态" width="120" align="center" sortable>
                     <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
                 </el-table-column>
-                <el-table-column label="所属项目" width="120" align="center">
+                <el-table-column label="所属项目" width="120" align="center" sortable>
                     <template slot-scope="scope">{{ scope.row.project | formatProject }}</template>
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
@@ -76,50 +76,34 @@
                      ref="addTaskForm"
                      style="margin: auto 20px"
                      label-position="left">
-                <el-form-item prop="previousTask" required>
-                    <el-input name="previousTask"
-                              type="text"
-                              v-model="addTaskForm.previousTask"
-                              autoComplete="on"
-                              placeholder="请选择依赖任务">
-                        <span slot="prefix">
-                            <svg-icon icon-class="user" class="color-main"></svg-icon>
-                        </span>
-                    </el-input>
-                </el-form-item>
-                <el-form-item prop="name" required>
+                <el-form-item prop="name" label="任务名"  required>
                     <el-input name="name"
                               type="text"
                               v-model="addTaskForm.name"
                               autoComplete="on"
                               placeholder="请输入任务名">
-                        <span slot="prefix">
-                            <svg-icon icon-class="password" class="color-main"></svg-icon>
-                        </span>
                     </el-input>
                 </el-form-item>
 
-                <el-form-item prop="name">
-                    <el-input name="name"
-                              type="text"
-                              v-model="addTaskForm.undertakerEid"
-                              autoComplete="on"
-                              placeholder="请选择执行人员">
-                        <span slot="prefix">
-                            <svg-icon icon-class="password" class="color-main"></svg-icon>
-                        </span>
-                    </el-input>
+                <el-form-item prop="undertakerEid" label="任务负责人">
+                    <el-select v-model="addTaskForm.undertakerEid" placeholder="请选择">
+                        <el-option
+                            v-for="item in this.employees"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item prop="name">
-                    <el-input name="name"
-                              type="text"
-                              v-model="addTaskForm.projectId"
-                              autoComplete="on"
-                              placeholder="请选择所属项目">
-                        <span slot="prefix">
-                            <svg-icon icon-class="password" class="color-main"></svg-icon>
-                        </span>
-                    </el-input>
+                <el-form-item prop="project" label="所属项目">
+                    <el-select v-model="addTaskForm.projectId" placeholder="请选择">
+                        <el-option
+                            v-for="item in this.projects"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="任务类型" required>
 
@@ -142,6 +126,8 @@
     import {confirmTask, rejectTask, updateTask, addTask} from "@/api/task";
     import store from "@/store";
     import {listTask} from "@/api/manager";
+    import {listProject} from "../../api/project";
+    import {listEmployeeOfManager} from "../../api/manager";
 
     export default {
         name: 'managerListTasksView',
@@ -176,6 +162,8 @@
                 editingRow: {},
                 editing: false,
                 addTaskDialogVisible: false,
+                projects: [],
+                employees: [],
             }
         },
         created() {
@@ -184,7 +172,7 @@
         methods: {
             getUrl(doc) {
                 if (doc) {
-                    return doc.url;
+                    return '' +  doc.url;
                 } else {
                     return doc;
 
@@ -192,6 +180,20 @@
             },
             handleAddTask() {
                 this.addTaskDialogVisible = true;
+                listProject().then(response => {
+                    if (response.status === 200) {
+                        this.projects = response.data;
+                        listEmployeeOfManager(store.getters.mid).then(response => {
+                            if (response.status === 200) {
+                                this.employees = response.data;
+                            } else {
+                                this.$message.error(response.message);
+                            }
+                        });
+                    } else {
+                        this.$message.error(response.message);
+                    }
+                })
             },
             handleEdit(index, row) {
                 if (row.editing) {
@@ -266,7 +268,7 @@
                     if (valid) {
                         this.loading = true;
                         const form = this.addTaskForm;
-                        addTask(form.previousId, form.name, form.type, form.undertakerEid, form.projectId)
+                        addTask([], form.name, form.type, form.undertakerEid, form.projectId)
                             .then(response => {
                                 if (response.status !== 200) {
                                     this.$message.error(response.message);
@@ -336,7 +338,7 @@
             formatDocument(document) {
                 if (document) {
 
-                    return document.url === null ? '未提交' : '/api' + document.url;
+                    return document.url === null ? '未提交' : '' + document.url;
                 } else {
                     return '未生成';
                 }
