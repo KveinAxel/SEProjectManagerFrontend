@@ -164,8 +164,6 @@
                                     } else {
                                         this.$message.error(response.message);
                                     }
-                                    // todo
-                                    // this.loading = false;
 
                                 });
                             this.$router.push({path: '/login'});

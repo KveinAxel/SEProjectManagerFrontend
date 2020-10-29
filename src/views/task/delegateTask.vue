@@ -31,9 +31,8 @@
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.task.pending)">{{ scope.row.pending |
-                            formatDocument }}</a>
-                        <span v-else>{{ scope.row.task.pending | formatDocument }}</span>
+                        <a class="el-icon-download" v-if="scope.row.pending" :href="getUrl(scope.row.pending)"></a>
+                        <span v-else>未生成</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center">

@@ -1,68 +1,44 @@
 <template>
     <div>
-        <div ref="chart" style="width: 600px;height:400px;">
+        <div ref="chart" style="width: 1200px;height:400px;">
 
         </div>
     </div>
 </template>
 <script>
-
+    import store from '@/store'
     export default {
         name: "echarts",
-        props: {
-            // tasks: [{
-            //     "id": String,
-            //     "previousId": [String],
-            //     "name": String,
-            //     "type": String,
-            //     "status": String,    // CREATED - 创建；ACTIVE - 执行中；INACTIVE - 随项目暂停; WAIT_COMMIT - 等待提交；DONE - 完成；REJECTED - 被打回 ; WAIT_REVIEW - 等待审核
-            // }]
-            task: Array
-        },
         mounted() {
-            this.draw();
-        },
-        watch: {
-            isShow() {
-                this.draw();
-            }
-        },
-        computed: {
-            tasks() {
-                return this.task
-            }
+            setInterval(this.draw, 3000);
         },
         data() {
-            return {}
+            return {
+                tasks: [],
+            }
         },
         methods: {
             draw() {
                 let nodes = [];
-                let edges = [{
-                    source: 0,
-                    target: 1,
-                    symbolSize: [5, 20],
-                    label: {
-                        show: true
-                    },
-                    lineStyle: {
-                        width: 5,
-                        curveness: 0.2
-                    }
-                }];
+                let edges = [];
                 let taskMap = {};
-                console.log(this.tasks);
-                window.tasks = this.tasks;
+                if (store.getters.eid) {
+                    this.tasks = window.employeeTaskList;
+                } else {
+                    this.tasks = window.managerTaskList;
+                }
+                let m = {
+                    'A': 0,
+                    'B': 1,
+                    'C': 2,
+                };
                 for (let item of this.tasks) {
-                    nodes.push({'name': item.name, x: null, y: null});
-                    console.log(item);
+                    nodes.push({'name': item.name, x: null, y: null, category: m[item.type]});
                     taskMap[item.id] = item.name;
                 }
                 for (let item of this.tasks) {
                     edges.push({source: taskMap[item.previousId], target: item.name});
                 }
-                console.log(nodes);
-                console.log(edges);
 
                 let mc = this.$refs.chart;
                 let myChart = this.$echarts.init(mc);
@@ -71,7 +47,7 @@
                         text: ''
                     },
                     tooltip: {},
-                    animationDurationUpdate: 1500,
+                    animationDurationUpdate: 1000,
                     animationEasingUpdate: 'quinticInOut',
                     series: [
                         {
@@ -95,9 +71,14 @@
                                 width: 2,
                                 curveness: 0
                             },
+                            categories: ['A', 'B', 'C'],
+                            center: [600, 200],
                             force: {
-                                repulsion: 1000
-                            }
+                                repulsion: 1000,
+                                gravity: 0.1
+                            },
+                            // focusNodeAdjacency: true,
+
                         }
                     ]
                 };

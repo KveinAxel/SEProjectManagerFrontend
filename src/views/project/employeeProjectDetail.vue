@@ -14,18 +14,18 @@
                 <el-table-column label="ID" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
                 </el-table-column>
-                <el-table-column label="项目名称" width="120" align="center">
+                <el-table-column label="项目名称" align="center">
                     <template slot-scope="scope">{{ scope.row.name }}</template>
                 </el-table-column>
-                <el-table-column label="负责经理" width="120" align="center">
+                <el-table-column label="负责经理" align="center">
                     <template slot-scope="scope">{{ scope.row.undertaker | formatUndertaker }}</template>
                 </el-table-column>
-                <el-table-column label="项目状态" width="120" align="center">
+                <el-table-column label="项目状态" align="center">
                     <template slot-scope="scope">{{ scope.row.status | formatProjectStatus }}</template>
                 </el-table-column>
-                <el-table-column label="项目文档" width="120" align="center">
+                <el-table-column label="项目文档" align="center">
                     <template slot-scope="scope">
-                        <i class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></i>
+                        <a class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></a>
                         <span v-else>未生成</span>
                     </template>
                 </el-table-column>
@@ -42,13 +42,13 @@
                 <el-table-column label="ID" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
                 </el-table-column>
-                <el-table-column label="任务名称" width="120" align="center">
+                <el-table-column label="任务名称" align="center">
                     <template slot-scope="scope">{{ scope.row.name }}</template>
                 </el-table-column>
-                <el-table-column label="负责员工" width="120" align="center">
+                <el-table-column label="负责员工" align="center">
                     <template slot-scope="scope">{{ scope.row.undertaker | formatUndertaker }}</template>
                 </el-table-column>
-                <el-table-column label="任务状态" width="120" align="center">
+                <el-table-column label="任务状态" align="center">
                     <template slot-scope="scope">{{ scope.row.status | formatTaskStatus }}</template>
                 </el-table-column>
             </el-table>
@@ -134,27 +134,38 @@
             <i class="el-icon-tickets"></i>
             <span>任务依赖图</span>
         </el-card>
-        <!--        <echarts v-bind="tasks"></echarts>-->
+        <echarts></echarts>
         <el-card style="margin-top: 30px" class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
             <span>任务依赖表</span>
         </el-card>
         <div class="table-container">
             <el-table ref="taskTable"
-                      :data="tasks"
+                      :data="taskList"
                       stripe
                       style="width: 100%"
                       v-loading="listLoading"
                       border
             >
-                <el-table-column label="前置任务ID" align="center">
-                    <template slot-scope="scope">{{ scope.row.previousId }}</template>
-                </el-table-column>
                 <el-table-column label="任务ID" align="center">
                     <template slot-scope="scope">{{ scope.row.id }}</template>
                 </el-table-column>
+
+                <el-table-column label="前置任务" align="center">
+                    <template slot-scope="scope">{{ prevTask(scope.row.previousId) | formatPrev }}</template>
+                </el-table-column>
+
                 <el-table-column label="任务名称" align="center">
                     <template slot-scope="scope">{{ scope.row.name }}</template>
+                </el-table-column>
+                <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                        <el-button
+                            size="medium"
+                            type="primary"
+                            @click="handlePreviousId(scope.$index, scope.row)">修改前置
+                        </el-button>
+                    </template>
                 </el-table-column>
             </el-table>
         </div>
@@ -163,13 +174,13 @@
 
 <script>
 
-    import {listTask} from "@/api/manager";
+    import {listTask} from "@/api/employee";
     import store from "@/store"
     import Echarts from "./echarts";
     import {startProject, stopProject} from "@/api/project";
     import {listEmployee} from "@/api/employee";
     import {projectInfo} from "@/api/project";
-    import {updateTask} from "../../api/task";
+    import {updateTask} from "@/api/task";
 
     export default {
         name: "employeeProjectDetail",
@@ -217,6 +228,12 @@
             }
         },
         filters: {
+            formatPrev(prev) {
+                if (prev === '') {
+                    return '无';
+                }
+                return prev;
+            },
             formatProjectStatus(status) {
                 if (status === 'ACTIVE') {
                     return '运行中';
@@ -266,6 +283,22 @@
             }
         },
         methods: {
+            prevTask(arr) {
+                let map = {};
+                for (let item of this.taskList) {
+                    map[item.id] = item.name;
+                }
+                let s = '';
+                for (let item of arr) {
+                    s += (map[item] + '、');
+                }
+                s = s.substr(0, s.length - 1);
+                return s;
+            },
+            handlePreviousId(index, row) {
+                this.previousIdDialogVisible = true;
+                this.task = row;
+            },
             getUrl(doc) {
                 if (doc) {
                     return doc.url;
@@ -357,19 +390,24 @@
                 return status === "INACTIVE";
             },
             getList() {
-                listTask(store.getters.mid).then(response => {
+                projectInfo(this.$route.query.id).then(response => {
                     if (response.status === 200) {
-                        const data = response.data;
+                        const data = response.data.tasks;
                         this.taskList = Object.assign(data);
+                        window.employeeTaskList = this.taskList;
+                        for (let item of this.taskList) {
+                            item.key = item.id;
+                            item.label = item.name;
+                        }
                         let cnt = 0;
                         for (const item of data) {
                             cnt++;
                             this.taskStatus[item.status]++;
-                            for (const deps of item.previousId) {
-                                let next = Object.assign(item);
-                                next.previousId = deps;
-                                this.tasks.push(next);
-                            }
+                            // for (const deps of item.previousId) {
+                            //     let next = Object.assign(item);
+                            //     next.previousId = deps;
+                            //     this.tasks.push(next);
+                            // }
                         }
                         for (let key in this.taskStatus) {
                             this.taskStatus[key] /= cnt / 100;

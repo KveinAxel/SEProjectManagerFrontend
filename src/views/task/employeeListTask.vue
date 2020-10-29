@@ -31,9 +31,8 @@
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.pending)">{{ scope.row.pending |
-                            formatDocument }}</a>
-                        <span v-else>{{ scope.row.pending | formatDocument }}</span>
+                        <a class="el-icon-download" v-if="scope.row.pending" :href="getUrl(scope.row.pending)"></a>
+                        <span v-else>未生成</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center">
@@ -42,20 +41,20 @@
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-if="canDelegate(scope.delegate)"
+                                v-if="warning(scope.delegate)"
                                 @click="handleDelegate(scope.$index, scope.row)">委托任务
                             </el-button>
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-if="!canDelegate(scope.delegate)"
+                                v-if="!info(scope.delegate)"
                                 @click="handleWithdraw(scope.$index, scope.row)">收回任务
                             </el-button>
                         </p>
                         <p>
                             <el-button
                                 size="medium"
-                                type="primary"
+                                type="success"
                                 v-show="canFinish(scope.row.status)"
                                 @click="handleFinish(scope.$index, scope.row)">完成任务
                             </el-button>
@@ -73,7 +72,6 @@
         <el-dialog title="提交任务文件"
                    :visible.sync="isUploading"
         >
-            <!--        todo -->
             <doc-upload></doc-upload>
             <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="isUploading=false">取 消</el-button>

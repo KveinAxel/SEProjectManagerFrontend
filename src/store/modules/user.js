@@ -1,9 +1,10 @@
 import {login, refreshLogin} from '@/api/auth'
 import {getToken, setToken, removeToken} from '@/utils/auth'
-import {userInfo} from "@/api/user";
+import {userInfo as userInfoAPI} from "@/api/user";
 import {managerInfo} from "@/api/manager";
 import {employeeInfo} from "@/api/employee";
 import {
+    getAvatar,
     getEiD,
     getMiD,
     getRoles,
@@ -15,13 +16,12 @@ import {
     setMid,
     setRoles
 } from "../../utils/auth";
-import de from "element-ui/src/locale/lang/de";
 
 const user = {
     state: {
         token: getToken(),
         name: '',
-        avatar: '',
+        avatar: getAvatar(),
         eid: getEiD(),
         ename: '',
         mid: getMiD(),
@@ -68,7 +68,7 @@ const user = {
                     commit('SET_TOKEN', tokenStr);
                     setRoles(roles);
                     commit('SET_ROLES', roles);
-                    if (roles.indexOf('ROLE_MANAGER') !== -1) {
+                    if (roles.includes('ROLE_MANAGER') ) {
                         managerInfo().then(response => {
                             const id = response.data.id;
                             const name = response.data.name;
@@ -78,7 +78,6 @@ const user = {
                                 commit('SET_AVATAR', '/api' + response.data.user.avatar.url);
                                 setAvatar('/api' + response.data.user.avatar.url);
                             } else {
-                                // todo
                                 let defualt_url = null;
                                 commit('SET_AVATAR', defualt_url);
 
@@ -86,7 +85,7 @@ const user = {
 
                             resolve()
                         })
-                    } else if (roles.indexOf('ROLE_EMPLOYEE') !== -1) {
+                    } else if (roles.includes('ROLE_EMPLOYEE') ) {
                         employeeInfo().then(response => {
                             const id = response.data.id;
                             const name = response.data.name;
@@ -96,20 +95,18 @@ const user = {
                                 commit('SET_AVATAR', '/api' + response.data.user.avatar.url);
                                 setAvatar('/api' + response.data.user.avatar.url);
                             } else {
-                                // todo
                                 let defualt_url = null;
                                 commit('SET_AVATAR', defualt_url);
 
                             }
                             resolve();
                         });
-                    } else if (roles.indexOf('ROLE_ADMIN') !== -1) {
-                        userInfo().then(response => {
+                    } else if (roles.includes('ROLE_ADMIN') ) {
+                        userInfoAPI().then(response => {
                             if (response.data.avatar) {
                                 commit('SET_AVATAR', '/api' + response.data.avatar.url);
                                 setAvatar('/api' + response.data.avatar.url);
                             } else {
-                                // todo
                                 let defualt_url = null;
                                 commit('SET_AVATAR', defualt_url);
 
@@ -126,12 +123,11 @@ const user = {
         // 获取用户信息
         GetInfo({commit, state}) {
             return new Promise((resolve, reject) => {
-                userInfo().then(response => {
+                userInfoAPI().then(response => {
                     const data = response.data;
                     if (data.avatar) {
                         commit('SET_AVATAR', data.avatar.url);
                     } else {
-                        // todo
                         let defualt_url = null;
                         commit('SET_AVATAR', defualt_url);
 

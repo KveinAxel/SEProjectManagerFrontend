@@ -25,7 +25,7 @@
                 </el-table-column>
                 <el-table-column label="项目文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <i class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></i>
+                        <a class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></a>
                         <span v-else>未生成</span>
                     </template>
                 </el-table-column>
@@ -163,7 +163,7 @@
             <i class="el-icon-tickets"></i>
             <span>任务依赖图</span>
         </el-card>
-        <!--        <echarts v-bind="tasks"></echarts>-->
+        <echarts ></echarts>
         <el-card style="margin-top: 30px" class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
             <span>任务依赖表</span>
@@ -181,7 +181,7 @@
                 </el-table-column>
 
                 <el-table-column label="前置任务" align="center">
-                    <template slot-scope="scope">{{ prevTask(scope.row.previousId) }}</template>
+                    <template slot-scope="scope">{{ prevTask(scope.row.previousId) | formatPrev}}</template>
                 </el-table-column>
 
                 <el-table-column label="任务名称" align="center">
@@ -248,6 +248,7 @@
                 changeUndertakerDialogVisible: false,
                 listLoading: false,
                 tasks: [],
+                taskProps: {},
                 task: {},
                 employees: [],
                 taskStatus: {
@@ -287,6 +288,12 @@
             }
         },
         filters: {
+            formatPrev(prev) {
+                if (prev === null || prev === '') {
+                    return '无';
+                }
+                return prev;
+            },
             formatProjectStatus(status) {
                 if (status === 'ACTIVE') {
                     return '运行中';
@@ -355,6 +362,7 @@
                             type: 'success',
                             message: '设置成功'
                         })
+                        location.reload();
                     } else {
                         this.$message.error(response.message);
                     }
@@ -453,6 +461,7 @@
                     if (response.status === 200) {
                         const data = response.data.tasks;
                         this.taskList = Object.assign(data);
+                        window.managerTaskList = this.taskList;
                         for (let item of this.taskList) {
                             item.key = item.id;
                             item.label = item.name;

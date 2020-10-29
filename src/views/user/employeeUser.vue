@@ -124,11 +124,11 @@
         },
         filters: {
             formatRoles(roles) {
-                if (roles.indexOf("ROLE_ADMIN") !== -1) {
+                if (roles.includes("ROLE_ADMIN") ) {
                     return '管理员';
-                } else if (roles.indexOf("ROLE_MANAGER") !== -1) {
+                } else if (roles.includes("ROLE_MANAGER")) {
                     return '经理';
-                } else if (roles.indexOf("ROLE_EMPLOYEE") !== -1) {
+                } else if (roles.includes("ROLE_EMPLOYEE")) {
                     return '员工';
                 } else {
                     return '未定';

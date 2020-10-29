@@ -24,7 +24,6 @@
                 <el-table-column label="任务名称" width="140" align="center">
                     <template slot-scope="scope">
                         <div v-if="!scope.row.editing">{{ scope.row.name }}</div>
-                        <!--                        fixme 居中编辑文字-->
                         <el-input v-else v-model="scope.row.name" placeholder="请输入任务名"></el-input>
                     </template>
                 </el-table-column>
@@ -42,17 +41,13 @@
                 </el-table-column>
                 <el-table-column label="任务文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null"
-                           :href="getUrl(scope.row.pending)">
-                            {{ scope.row.pending | formatDocument }}
-                        </a>
-                        <span v-else>{{ scope.row.pending | formatDocument }}</span>
+                        <a class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></a>
+                        <span v-else>未生成</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <p>
-                            <!--                            fixme: 实时更新按钮文字-->
                             <el-button
                                 size="medium"
                                 type="primary"
@@ -62,7 +57,7 @@
                         <p>
                             <el-button
                                 size="medium"
-                                type="primary"
+                                type="success"
                                 v-show="canReview(scope.row.status)"
                                 @click="handleReview(scope.$index, scope.row)">审核任务
                             </el-button>

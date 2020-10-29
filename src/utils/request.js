@@ -16,7 +16,6 @@ service.interceptors.request.use(config => {
     }
     return config
 }, error => {
-    // todo for debug
     console.log(error);
     Promise.reject(error);
 });
@@ -41,7 +40,7 @@ service.interceptors.response.use(
         }
     },
     error => {
-        console.log('err' + error);// todo  for debug
+        console.log('err' + error);
         Message({
             message: error.message,
             type: 'error',

@@ -33,7 +33,7 @@
                         <el-button
                             size="medium"
                             type="primary"
-                            @click="handleEdit(scope.$index, scope.row)">{{isEditing | formatEditting}}
+                            @click="handleEdit(scope.$index, scope.row)">{{scope.row.isEditing | formatEditting}}
                         </el-button>
                         <el-button
                             size="medium"

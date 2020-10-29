@@ -27,7 +27,7 @@ export let constantRouterMap = [
         path: '/project',
         component: Layout,
         name: 'project',
-        meta: {title: '项目', icon: 'tree'},
+        meta: {title: '项目', icon: 'tree', roles: '!ROLE_ADMIN'},
         children: [
             {
                 path: 'managerProject',
@@ -39,7 +39,7 @@ export let constantRouterMap = [
                 path: 'employeeProject',
                 name: 'employeeProject',
                 component: () => import('@/views/project/employeeListProject'),
-                meta: {title: '项目列表', icon: 'tree'},
+                meta: {title: '项目列表', icon: 'tree', roles: 'ROLE_EMPLOYEE'},
             },
 
             {
@@ -95,7 +95,7 @@ export let constantRouterMap = [
                 path: 'user',
                 name: 'user',
                 component: () => import('@/views/user/index'),
-                meta: {title: '个人中心', icon: 'marker'},
+                meta: {title: '个人中心', icon: 'marker', roles: "ROLE_ADMIN"},
             },
             {
                 path: 'managerUser',

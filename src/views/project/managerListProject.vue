@@ -34,7 +34,7 @@
                 </el-table-column>
                 <el-table-column label="项目文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <i class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></i>
+                        <a class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></a>
                         <span v-else>未生成</span>
                     </template>
                 </el-table-column>
@@ -43,7 +43,7 @@
                         <p>
                             <el-button
                                 size="medium"
-                                type="info"
+                                type="success"
                                 v-if="isStop(scope.row.status)"
                                 @click="handleStartProject(scope.$index, scope.row)">开始
                             </el-button>
