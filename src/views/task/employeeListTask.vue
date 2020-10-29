@@ -348,7 +348,7 @@
 
                     return document.url === null ? '未生成' : '/api' + document.url;
                 } else {
-                    return document;
+                    return '未生成';
                 }
             },
         }

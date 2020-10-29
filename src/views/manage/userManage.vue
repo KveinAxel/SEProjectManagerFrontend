@@ -89,7 +89,7 @@
             },
             getURL(avatar) {
                 if (avatar) {
-                    return avatar.url;
+                    return '/api' + avatar.url;
                 } else {
                     return avatar;
                 }

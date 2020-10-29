@@ -10,7 +10,7 @@
     export default {
         name: "websocket",
         created() {
-            let host = '172.168.3.65';
+            let host = '192.168.43.234';
             let port = '8089';
             let token = getToken();
             let socket = io.connect('http://' + host + ':' + port + '?token=' + token, {transports:['websocket','xhr-polling','jsonp-polling']});

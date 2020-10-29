@@ -341,9 +341,9 @@
             formatDocument(document) {
                 if (document) {
 
-                    return document.url === null ? '未提交' : document.url;
+                    return document.url === null ? '未提交' : '/api' + document.url;
                 } else {
-                    return document;
+                    return '未生成';
                 }
             },
         }

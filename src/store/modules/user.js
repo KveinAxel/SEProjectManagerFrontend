@@ -3,7 +3,19 @@ import {getToken, setToken, removeToken} from '@/utils/auth'
 import {userInfo} from "@/api/user";
 import {managerInfo} from "@/api/manager";
 import {employeeInfo} from "@/api/employee";
-import {getEiD, getMiD, getRoles, removeEid, removeMid, removeRoles, setEid, setMid, setRoles} from "../../utils/auth";
+import {
+    getEiD,
+    getMiD,
+    getRoles,
+    removeEid,
+    removeMid,
+    removeRoles,
+    setAvatar,
+    setEid,
+    setMid,
+    setRoles
+} from "../../utils/auth";
+import de from "element-ui/src/locale/lang/de";
 
 const user = {
     state: {
@@ -62,6 +74,16 @@ const user = {
                             const name = response.data.name;
                             setMid(id);
                             commit("SET_MANAGER", id, name);
+                            if (response.data.user.avatar) {
+                                commit('SET_AVATAR', '/api' + response.data.user.avatar.url);
+                                setAvatar('/api' + response.data.user.avatar.url);
+                            } else {
+                                // todo
+                                let defualt_url = null;
+                                commit('SET_AVATAR', defualt_url);
+
+                            }
+
                             resolve()
                         })
                     } else if (roles.indexOf('ROLE_EMPLOYEE') !== -1) {
@@ -70,8 +92,30 @@ const user = {
                             const name = response.data.name;
                             setEid(id);
                             commit("SET_EMPLOYEE", id, name);
+                            if (response.data.user.avatar) {
+                                commit('SET_AVATAR', '/api' + response.data.user.avatar.url);
+                                setAvatar('/api' + response.data.user.avatar.url);
+                            } else {
+                                // todo
+                                let defualt_url = null;
+                                commit('SET_AVATAR', defualt_url);
+
+                            }
                             resolve();
-                        })
+                        });
+                    } else if (roles.indexOf('ROLE_ADMIN') !== -1) {
+                        userInfo().then(response => {
+                            if (response.data.avatar) {
+                                commit('SET_AVATAR', '/api' + response.data.avatar.url);
+                                setAvatar('/api' + response.data.avatar.url);
+                            } else {
+                                // todo
+                                let defualt_url = null;
+                                commit('SET_AVATAR', defualt_url);
+
+                            }
+                            resolve();
+                        });
                     }
                 }).catch(error => {
                     reject(error)
@@ -84,7 +128,14 @@ const user = {
             return new Promise((resolve, reject) => {
                 userInfo().then(response => {
                     const data = response.data;
-                    commit('SET_AVATAR', data.avatar);
+                    if (data.avatar) {
+                        commit('SET_AVATAR', data.avatar.url);
+                    } else {
+                        // todo
+                        let defualt_url = null;
+                        commit('SET_AVATAR', defualt_url);
+
+                    }
                     resolve(response)
                 }).catch(error => {
                     reject(error)

@@ -1,12 +1,13 @@
 import request from '@/utils/request'
 
 // 更新用户
-export function updateUser(id, username) {
+export function updateUser(id, username, resourceId) {
     return request({
         url: '/user/' + id + '/update',
         method: 'post',
         data: {
-            'username': username
+            'username': username,
+            'avatarId': resourceId
         }
     })
 }

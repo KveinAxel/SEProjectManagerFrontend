@@ -25,8 +25,7 @@
                 </el-table-column>
                 <el-table-column label="项目文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="scope.row.doc.url">{{ scope.row.doc | formatDocument
-                            }}</a>
+                        <i class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></i>
                         <span v-else>未生成</span>
                     </template>
                 </el-table-column>
@@ -329,7 +328,11 @@
                 return project.name;
             },
             formatDocument(document) {
-                return document.url === null ? '未生成' : document.url;
+                if (document) {
+                    return document.url === null ? '未生成' : '/api' + document.url;
+                } else {
+                    return '未生成'
+                }
             }
         },
         methods: {

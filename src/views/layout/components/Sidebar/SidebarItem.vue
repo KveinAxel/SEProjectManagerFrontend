@@ -1,6 +1,6 @@
 <template>
     <div class="menu-wrapper">
-        <template v-for="item in routes" v-if="!item.hidden&&item.children">
+        <template v-for="item in routes" v-if="canSee(item)">
 
             <router-link v-if="hasOneShowingChildren(item.children) && !item.children[0].children&&!item.alwaysShow"
                          :to="item.path+'/'+item.children[0].path"
@@ -19,7 +19,7 @@
                     <span v-if="item.meta&&item.meta.title" slot="title">{{item.meta.title}}</span>
                 </template>
 
-                <template v-for="child in item.children" v-if="!child.hidden">
+                <template v-for="child in item.children" v-if="canSeeChildren(child)">
                     <sidebar-item :is-nest="true" class="nest-menu" v-if="child.children&&child.children.length>0"
                                   :routes="[child]" :key="child.path"></sidebar-item>
 
@@ -49,6 +49,33 @@
             }
         },
         methods: {
+            canSee(item) {
+                if (!item.hidden&&item.children) {
+                    if (item.meta&&item.meta.roles) {
+                        if (item.meta.roles[0] === '!') {
+                            return !this.$store.getters.roles.includes(item.meta.roles.substr(1));
+                        }
+                        return !!this.$store.getters.roles.includes(item.meta.roles);
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            canSeeChildren(item) {
+                if (!item.hidden) {
+                    if (item.meta&&item.meta.roles) {
+                        if (item.meta.roles[0] === '!') {
+                            return !this.$store.getters.roles.includes(item.meta.roles.substr(1));
+                        }
+                        return !!this.$store.getters.roles.includes(item.meta.roles);
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            },
+
             hasOneShowingChildren(children) {
                 const showingChildren = children.filter(item => {
                     return !item.hidden

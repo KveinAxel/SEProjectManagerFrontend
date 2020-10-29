@@ -32,10 +32,9 @@
                 <el-table-column label="项目状态" align="center">
                     <template slot-scope="scope">{{ scope.row.status | formatStatus }}</template>
                 </el-table-column>
-                <el-table-column label="项目文档" align="center">
+                <el-table-column label="项目文档" width="120" align="center">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.doc !== null" :href="getUrl(scope.row.doc)">{{ scope.row.doc | formatDocument
-                            }}</a>
+                        <i class="el-icon-download" v-if="scope.row.doc" :href="scope.row.doc.url"></i>
                         <span v-else>未生成</span>
                     </template>
                 </el-table-column>
@@ -260,9 +259,9 @@
             },
             formatDocument(document) {
                 if (document) {
-                    return document.url === null ? '未生成' : document.url;
+                    return document.url === null ? '未生成' : '/api' + document.url;
                 } else {
-                    return document;
+                    return '未生成';
                 }
             }
         }

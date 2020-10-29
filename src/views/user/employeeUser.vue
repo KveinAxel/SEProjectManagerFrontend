@@ -16,7 +16,7 @@
                     <template slot-scope="scope">{{userForm.roles | formatRoles}}</template>
                 </el-form-item>
                 <el-form-item label="头像：" prop="icon">
-                    <pic-upload v-model="userForm.avatar.url"></pic-upload>
+                    <pic-upload></pic-upload>
                 </el-form-item>
                 <el-form-item label="工作类型" required>
                     <el-radio-group v-model="userForm.type">
@@ -93,15 +93,15 @@
                             cancelButtonText: '取消',
                             type: 'warning'
                         }).then(() => {
-                            updateUser(this.userForm.id, this.userForm.username).then(response => {
+                            const rid = window.resourceObject.id;
+                            updateUser(this.userForm.id, this.userForm.username, rid).then(response => {
                                 if (response.status === 200) {
-                                    updateEmployee(this.userForm.eid).then(response => {
+                                    updateEmployee(this.userForm.eid, this.userForm.name, this.userForm.type).then(response => {
                                         if (response.status === 200) {
                                             this.$message({
                                                 type: 'success',
                                                 message: '更新成功'
                                             });
-                                            this.$router.back();
                                         } else {
                                             this.$message.error(response.message);
                                         }
