@@ -3,6 +3,14 @@
         <el-card class="operate-container" shadow="never">
             <i class="el-icon-tickets"></i>
             <span>用户列表</span>
+            <el-button
+                class="btn-add"
+                type="info"
+                style="margin-right: 30px"
+                @click="handleAddUser"
+                size="small">
+                添加用户
+            </el-button>
         </el-card>
         <div class="table-container">
             <el-table ref="userManageTable"
@@ -49,25 +57,107 @@
                 </el-table-column>
             </el-table>
         </div>
+        <el-dialog :visible.sync="addUserDialogVisible"
+                   title="用户"
+                   width="40%">
+            <el-form autoComplete="on"
+                     :model="addUserForm"
+                     :rules="addUserRules"
+                     ref="addUserForm"
+                     style="margin: auto 20px"
+                     label-position="left">
+                <el-form-item prop="username" label="用户名" required>
+                    <el-input name="username"
+                              type="text"
+                              v-model="addUserForm.username"
+                              autoComplete="on"
+                              placeholder="用户名">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password" label="密码">
+                    <el-input name="password"
+                              type="text"
+                              v-model="addUserForm.password"
+                              autoComplete="on"
+                              placeholder="密码">
+                    </el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="addUserDialogVisible=false">取 消</el-button>
+            <el-button type="primary" @click="handleAddUserConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
     import {deleteUser, listUser, updatePassword, updateUser} from "@/api/user";
+    import {addUser} from "@/api/user";
+    import {isvalidUsername} from "../../utils/validate";
 
     export default {
         name: "manage",
         data() {
+            const validateUsername = (rule, value, callback) => {
+                if (!isvalidUsername(value)) {
+                    callback(new Error('请输入正确的用户名'))
+                } else {
+                    callback()
+                }
+            };
+            const validatePass = (rule, value, callback) => {
+                if (value.length < 3) {
+                    callback(new Error('密码不能小于3位'))
+                } else {
+                    callback()
+                }
+            };
             return {
+                users:[],
                 listLoading: false,
                 isEditing: false,
                 editingRow: {},
+                addUserForm: {
+                    username: '',
+                    password: '',
+                },
+                addUserDialogVisible: false,
+                addUserRules: {
+                    username: [{required: true, trigger: 'blur', validator: validateUsername}],
+                    password: [{required: true, trigger: 'blur', validator: validatePass}]
+                }
             }
         },
         created() {
             this.getList();
         },
         methods: {
+            handleAddUser() {
+                this.addUserDialogVisible = true;
+            },
+            handleAddUserConfirm() {
+                this.$refs.addUserForm.validate(valid => {
+                    if (valid) {
+                        this.loading = true;
+                        addUser(this.addUserForm.username, this.addUserForm.password).then(response => {
+                            if (response.status === 200) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '添加成功'
+                                })
+                            } else {
+                                this.$message.error(response.message);
+                            }
+                            this.loading = true;
+                            this.addUserDialogVisible = false;
+                        });
 
+                    } else {
+                        console.log('参数验证不合法！');
+                        return false
+                    }
+                })
+            },
             handleChangePassword(index, row) {
                 this.$prompt('请输入新密码', '提示', {
                     confirmButtonText: '确定',

@@ -14,7 +14,7 @@ import {
     setAvatar,
     setEid,
     setMid,
-    setRoles
+    setRoles, setUid
 } from "../../utils/auth";
 
 const user = {
@@ -51,6 +51,11 @@ const user = {
             state.mid = mid;
             state.mname = mname;
         },
+        SET_USER: (state, uid, useername) => {
+            state.uid = uid;
+            state.useername = useername;
+        },
+
 
     },
 
@@ -74,6 +79,8 @@ const user = {
                             const name = response.data.name;
                             setMid(id);
                             commit("SET_MANAGER", id, name);
+                            setUid(response.data.user.id);
+                            commit("SET_USER", response.data.user.id, response.data.user.username);
                             if (response.data.user.avatar) {
                                 commit('SET_AVATAR', '' + response.data.user.avatar.url);
                                 setAvatar('' + response.data.user.avatar.url);

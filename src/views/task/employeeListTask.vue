@@ -41,13 +41,13 @@
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-if="warning(scope.delegate)"
+                                v-if="canDelegate(scope.delegate)"
                                 @click="handleDelegate(scope.$index, scope.row)">委托任务
                             </el-button>
                             <el-button
                                 size="medium"
                                 type="info"
-                                v-if="!info(scope.delegate)"
+                                v-if="!canDelegate(scope.delegate)"
                                 @click="handleWithdraw(scope.$index, scope.row)">收回任务
                             </el-button>
                         </p>

@@ -72,7 +72,6 @@
             width="40%">
             <el-form autoComplete="on"
                      :model="addTaskForm"
-                     :rules="addTaskRules"
                      ref="addTaskForm"
                      style="margin: auto 20px"
                      label-position="left">

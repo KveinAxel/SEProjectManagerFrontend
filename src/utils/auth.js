@@ -4,6 +4,7 @@ const TokenKey = 'loginToken';
 const RolesKey = 'roles';
 const EidKey = 'eid';
 const MidKey = 'mid';
+const UidKey = 'uid';
 const Avatar = 'avatar';
 
 export function getToken() {
@@ -59,6 +60,18 @@ export function setMid(mid) {
 
 export function removeMid() {
     return Cookies.remove(MidKey)
+}
+
+export function getUiD() {
+    return Cookies.get(UidKey)
+}
+
+export function setUid(uid) {
+    return Cookies.set(UidKey, uid)
+}
+
+export function removeUid() {
+    return Cookies.remove(UidKey)
 }
 
 

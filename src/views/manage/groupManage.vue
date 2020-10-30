@@ -145,9 +145,12 @@
                 for (let eid of this.groupSelected) {
                     list.push(managerAddEmployee(this.$store.getters.mid, eid));
                 }
-                this.$message({
-                    type: 'success',
-                    message: '添加成功'
+                Promise.all(list).then(value => {
+
+                    this.$message({
+                        type: 'success',
+                        message: '添加成功'
+                    })
                 })
                 this.addEmployeeDialogVisible = false;
             },

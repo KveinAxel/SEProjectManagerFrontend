@@ -74,7 +74,7 @@
                      label-position="left">
 
                 <el-form-item label="项目名称" prop="name">
-                    <el-input name="name" v-model="genProjectForm.name"></el-input>
+                    <el-input name="name" v-model="genProjectForm.name" placeholder="请输入项目名称"></el-input>
                 </el-form-item>
                 <el-form-item label="生成任务总数" prop="total">
                     <el-input-number name="totalCount" v-model="genProjectForm.total"></el-input-number>
@@ -178,6 +178,7 @@
                                 type: 'success',
                                 message: '生成成功'
                             })
+                            this.genProjectForm = Object.assign(this.defaultGenProjectForm);
                         }
                     });
                 });

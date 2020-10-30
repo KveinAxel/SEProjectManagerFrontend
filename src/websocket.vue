@@ -27,6 +27,15 @@
                     })
                 }
             });
+            //
+            // socket.on('login', (data) => {
+            //     if (store.getters.uid === data.id) {
+            //         this.$message.error("您的帐号在别处登陆，您已被踢出");
+            //         store.dispatch("LogOut");
+            //     }
+            // });
+
+
 
         }
     }

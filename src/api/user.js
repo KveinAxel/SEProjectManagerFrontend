@@ -24,6 +24,18 @@ export function updatePassword(id, username, password) {
     })
 }
 
+// 增加用户
+export function addUser(username, password) {
+    return request({
+        url: '/user/',
+        method: 'post',
+        data: {
+            'username': username,
+            'password': password
+        }
+    })
+}
+
 
 
 // 显示用户列表
